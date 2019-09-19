@@ -1,0 +1,14 @@
+
+serviceName: ServiceB
+version: v1.0
+endpoints:
+  - "/get"
+  - "/post"
+dependencies:
+  - serviceName: ServiceA
+    endpoints:
+      - "/get"
+      - "/put"
+  - serviceName: ServiceC
+    endpoints:
+      - "/post"
