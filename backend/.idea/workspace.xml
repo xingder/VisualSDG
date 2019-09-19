@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="925fc7c3-ea7f-4a0f-be9e-88fd454e37bd" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/yingchi/microservicedependencymanager/controllers/WebDatasController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/yingchi/microservicedependencymanager/controllers/WebDatasController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/ui/src/components/DragUploadTest.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/ui/src/components/DragUploadTest.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/ui/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/ui/src/views/Home.vue" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1QvCkStDdETolYQv77E19pA4zCX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="restartRequiresConfirmation" value="false" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.MicroserviceDependencyManagerApplication">
+    <configuration name="MicroserviceDependencyManagerApplicationTests.createServiceApiTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="microservice-dependency-manager" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.yingchi.microservicedependencymanager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.yingchi.microservicedependencymanager" />
+      <option name="MAIN_CLASS_NAME" value="io.yingchi.microservicedependencymanager.MicroserviceDependencyManagerApplicationTests" />
+      <option name="METHOD_NAME" value="createServiceApiTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MicroserviceDependencyManagerApplicationTests.createServiceInvokeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="microservice-dependency-manager" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.yingchi.microservicedependencymanager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.yingchi.microservicedependencymanager" />
+      <option name="MAIN_CLASS_NAME" value="io.yingchi.microservicedependencymanager.MicroserviceDependencyManagerApplicationTests" />
+      <option name="METHOD_NAME" value="createServiceInvokeTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MicroserviceDependencyManagerApplicationTests.deleteAllEndpointNodesTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="microservice-dependency-manager" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.yingchi.microservicedependencymanager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.yingchi.microservicedependencymanager" />
+      <option name="MAIN_CLASS_NAME" value="io.yingchi.microservicedependencymanager.MicroserviceDependencyManagerApplicationTests" />
+      <option name="METHOD_NAME" value="deleteAllEndpointNodesTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MicroserviceDependencyManagerApplicationTests.deleteServiceNodeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="microservice-dependency-manager" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.yingchi.microservicedependencymanager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.yingchi.microservicedependencymanager" />
+      <option name="MAIN_CLASS_NAME" value="io.yingchi.microservicedependencymanager.MicroserviceDependencyManagerApplicationTests" />
+      <option name="METHOD_NAME" value="deleteServiceNodeTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MicroserviceDependencyManagerApplicationTests.saveServiceNodeTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="microservice-dependency-manager" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.yingchi.microservicedependencymanager.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="io.yingchi.microservicedependencymanager" />
+      <option name="MAIN_CLASS_NAME" value="io.yingchi.microservicedependencymanager.MicroserviceDependencyManagerApplicationTests" />
+      <option name="METHOD_NAME" value="saveServiceNodeTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MicroserviceDependencyManagerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="microservice-dependency-manager" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="io.yingchi.microservicedependencymanager.MicroserviceDependencyManagerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.MicroserviceDependencyManagerApplicationTests.createServiceInvokeTest" />
+        <item itemvalue="JUnit.MicroserviceDependencyManagerApplicationTests.createServiceApiTest" />
+        <item itemvalue="JUnit.MicroserviceDependencyManagerApplicationTests.saveServiceNodeTest" />
+        <item itemvalue="JUnit.MicroserviceDependencyManagerApplicationTests.deleteServiceNodeTest" />
+        <item itemvalue="JUnit.MicroserviceDependencyManagerApplicationTests.deleteAllEndpointNodesTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="925fc7c3-ea7f-4a0f-be9e-88fd454e37bd" name="Default Changelist" comment="" />
+      <created>1568641825507</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1568641825507</updated>
+      <workItem from="1568641828574" duration="3488000" />
+      <workItem from="1568686596530" duration="28975000" />
+      <workItem from="1568777554951" duration="12458000" />
+    </task>
+    <task id="LOCAL-00001" summary="MDM init">
+      <created>1568645617046</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1568645617046</updated>
+    </task>
+    <task id="LOCAL-00002" summary="后端：neo4j 初步测试成功">
+      <created>1568688924427</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1568688924427</updated>
+    </task>
+    <task id="LOCAL-00003" summary="后端：Neo4J 数据库操作初步完善">
+      <created>1568701723946</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1568701723946</updated>
+    </task>
+    <task id="LOCAL-00004" summary="后端：依赖图 nodes 数据提供接口初步完成 /nodes">
+      <created>1568708167956</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1568708167956</updated>
+    </task>
+    <task id="LOCAL-00005" summary="后端：依赖图 links 数据提供接口初步完成 /links">
+      <created>1568711590090</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1568711590090</updated>
+    </task>
+    <task id="LOCAL-00006" summary="无交互初级展示版本">
+      <created>1568719227268</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1568719227268</updated>
+    </task>
+    <task id="LOCAL-00007" summary="后端: 提供依赖列表信息，优化拓扑图节点展示效果">
+      <created>1568794038231</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1568794038231</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="MDM init" />
+    <MESSAGE value="后端：neo4j 初步测试成功" />
+    <MESSAGE value="后端：Neo4J 数据库操作初步完善" />
+    <MESSAGE value="后端：依赖图 nodes 数据提供接口初步完成 /nodes" />
+    <MESSAGE value="后端：依赖图 links 数据提供接口初步完成 /links" />
+    <MESSAGE value="无交互初级展示版本" />
+    <MESSAGE value="后端: 提供依赖列表信息，优化拓扑图节点展示效果" />
+    <option name="LAST_COMMIT_MESSAGE" value="后端: 提供依赖列表信息，优化拓扑图节点展示效果" />
+  </component>
+</project>
