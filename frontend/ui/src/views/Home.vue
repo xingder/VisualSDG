@@ -2,7 +2,7 @@
   <div class="home">
     <a-layout id="components-layout-demo-top-side">
       <a-layout-header class="header">
-        <div class="logo">MDM neo4j</div>
+        <div class="logo">VisualSDG</div>
         <a-menu
                 theme="dark"
                 mode="horizontal"
@@ -10,15 +10,13 @@
                 :style="{ lineHeight: '64px' }"
         >
           <a-menu-item key="1"><router-link to="/">Home</router-link></a-menu-item>
-          <a-menu-item key="2">nav 2</a-menu-item>
-          <a-menu-item key="3"><router-link to="/about">About</router-link></a-menu-item>
 
         </a-menu>
       </a-layout-header>
       <a-layout-content style="padding: 0 50px">
         <a-breadcrumb style="margin: 16px 0">
           <a-breadcrumb-item>Home</a-breadcrumb-item>
-          <a-breadcrumb-item>MDM</a-breadcrumb-item>
+          <a-breadcrumb-item>VisualSDG</a-breadcrumb-item>
         </a-breadcrumb>
         <a-layout style="padding: 24px 0; background: #fff">
           <a-layout-sider width="200" style="background: #fff">
@@ -30,12 +28,13 @@
             >
               <a-sub-menu key="sub1">
                 <span slot="title"><a-icon type="laptop" />依赖管理</span>
-                <a-menu-item key="1"><router-link to="/dependencyGraph">依赖拓扑</router-link></a-menu-item>
-                <a-menu-item key="2"><router-link to="/dataMaintanance">依赖列表</router-link></a-menu-item>
+                <a-menu-item><router-link to="/dependencyGraph">依赖拓扑</router-link></a-menu-item>
+                <a-menu-item><router-link to="/dataMaintanance">依赖列表</router-link></a-menu-item>
+                <a-menu-item><router-link to="/graphGenerate">依赖生成</router-link></a-menu-item>
               </a-sub-menu>
               <a-sub-menu key="sub2">
                 <span slot="title"><a-icon type="notification" />设置/选项</span>
-                <a-menu-item key="5">可视化选项</a-menu-item>
+                <a-menu-item key="1">可视化选项</a-menu-item>
                 <a-menu-item><router-link to="/dragUploadTest">上传测试</router-link></a-menu-item>
               </a-sub-menu>
             </a-menu>

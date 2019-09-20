@@ -3,8 +3,8 @@
         <a-table :columns="columns" :dataSource="data">
             <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
             <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
-            <span slot="endpoints" slot-scope="endpoints"><a-tag v-for="endpoint in endpoints" color="blue" :key="endpoint">{{endpoint}}</a-tag></span>
-            <span slot="dependencies" slot-scope="dependencies"><a-tag v-for="dependency in dependencies" color="red" :key="dependency">{{dependency}}</a-tag></span>
+            <span slot="endpoints" slot-scope="endpoints"><a-tag v-for="endpoint in endpoints" color="blue">{{endpoint}}</a-tag></span>
+            <span slot="dependencies" slot-scope="dependencies"><a-tag v-for="dependency in dependencies" color="red">{{dependency}}</a-tag></span>
             <span slot="options" slot-scope="text, record">
 <!--              <a href="javascript:;">Invite 一 {{record.name}}</a>-->
               <a href="javascript:;">Option</a>
@@ -19,13 +19,17 @@
     const columns = [{
         dataIndex: 'service',
         slots: { title: 'customTitle' },
-        scopedSlots: { customRender: 'name' },
+        sortOrder: 'descend',
+    }, {
+        title: 'Version',
+        dataIndex: 'version',
+        scopedSlots: { customRender: 'version' },
     }, {
         title: 'Endpoints',
         dataIndex: 'endpoints',
         scopedSlots: { customRender: 'endpoints' },
     }, {
-        title: 'dependencies',
+        title: 'Dependencies',
         dataIndex: 'dependencies',
         scopedSlots: { customRender: 'dependencies' },
     }, {

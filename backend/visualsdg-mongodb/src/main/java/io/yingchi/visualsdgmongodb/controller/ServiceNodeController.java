@@ -53,4 +53,9 @@ public class ServiceNodeController {
     public List<List<Map<String, Object>>> fetchCascaderOptionsData() {
         return webDataService.getCascaderOptionsData();
     }
+
+    @PostMapping("/selectedService")
+    public void receiveSelectedService(HttpServletRequest request) {
+
+    }
 }
