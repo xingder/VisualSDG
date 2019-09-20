@@ -1,0 +1,6 @@
+serviceName: ServiceC
+version: v1.0
+endpoints:
+  - "/endpoint1"
+  - "/endpoint2"
+dependencies:

@@ -35,8 +35,7 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
         // 库中无重复版本服务节点
         ServiceNode serviceNode = new ServiceNode(serviceName, version, endpoints, dependencies);
         serviceNodeRepository.save(serviceNode);
-        logger.info("新 ServiceNode 已经添加：");
-        logger.info(serviceNode.toString());
+        logger.info("新 ServiceNode 已经添加：" + serviceNode.toString());
     }
 
     @Override
