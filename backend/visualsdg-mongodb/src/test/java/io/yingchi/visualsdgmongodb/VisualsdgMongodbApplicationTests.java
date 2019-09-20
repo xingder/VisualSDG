@@ -1,5 +1,7 @@
 package io.yingchi.visualsdgmongodb;
 
+import io.yingchi.visualsdgmongodb.entity.ServiceNode;
+import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
 import org.junit.Test;
@@ -19,6 +21,9 @@ public class VisualsdgMongodbApplicationTests {
     ServiceNodeService serviceNodeService;
 
     @Autowired
+    ServiceNodeRepository serviceNodeRepository;
+
+    @Autowired
     WebDataService webDataService;
 
     /**
@@ -36,6 +41,12 @@ public class VisualsdgMongodbApplicationTests {
     public void getServiceTableDataTest() {
         List<Map<String, Object>> serviceTableData = webDataService.getServiceTableData();
         serviceTableData.forEach(x -> System.out.println(x));
+    }
+
+    @Test
+    public void getAllExistingServiceNameListTest() {
+        List<String> allExistingServiceNameList = serviceNodeService.getAllExistingServiceNameList();
+        allExistingServiceNameList.forEach(x -> System.out.println(x));
     }
 
 }

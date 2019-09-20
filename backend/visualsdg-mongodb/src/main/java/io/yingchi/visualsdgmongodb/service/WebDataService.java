@@ -7,6 +7,8 @@ public interface WebDataService {
 
     public List<Map<String, Object>> getServiceTableData();  // 获取 service 表格数据
 
+    public List<List<Map<String, Object>>> getCascaderOptionsData();  // 获取级联选择数据集合
+
     public List<Map<String, Object>> getGraphNodesData();  // 获取 nodes 数据用于 ECharts Graph
 
     public List<Map<String, Object>> getGraphLinksData();  // 获取 links 据用于 ECharts Graph

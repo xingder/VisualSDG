@@ -1,0 +1,8 @@
+serviceName: ServiceB
+version: v1.1
+endpoints:
+  - "/endpoint2"
+dependencies:
+  - serviceName: ServiceC
+    endpoints:
+      - "/endpoint1"

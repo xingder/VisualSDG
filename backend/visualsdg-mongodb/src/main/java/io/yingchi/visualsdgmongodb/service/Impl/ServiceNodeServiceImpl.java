@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,5 +55,22 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
             }
             logger.warn("不存在该版本同名服务节点: " + serviceName + ": " + version);
         }
+    }
+
+    @Override
+    public List<String> getAllExistingServiceNameList() {
+        List<ServiceNode> existingService = serviceNodeRepository.findAll();
+        List<String> serviceNameList = new ArrayList<>();
+
+        if (existingService != null) {
+            for (ServiceNode service : existingService) {
+                String serviceName = service.getServiceName();
+                if (!serviceNameList.contains(serviceName)) {
+                    // 名单中不存在，添加
+                    serviceNameList.add(serviceName);
+                }
+            }
+        }
+        return serviceNameList;
     }
 }

@@ -37,11 +37,28 @@ public class WebDataServiceImpl implements WebDataService {
                 servicesList.add(row);
                 counter++;
             }
-            logger.info("getServiceTableData() 成功获取到 " + counter + " 条 Service 数据");
             return servicesList;
         }
 
         logger.warn("getServiceTableData(): 无 Service 数据");
+        return null;
+    }
+
+    @Override
+    public List<List<Map<String, Object>>> getCascaderOptionsData() {
+
+        List<ServiceNode> serviceNodesFound = serviceNodeRepository.findAll();
+        if (serviceNodesFound != null) {
+            List<List<Map<String, Object>>> cascaders = new ArrayList<>(); // 新建 cascader 的列表
+            for (ServiceNode serviceNode : serviceNodesFound) {
+                String serviceName = serviceNode.getServiceName(); // 获取服务名，检查是否重复
+
+                List<Map<String, Object>> cascader = new ArrayList<>(); // 每个 service 对应一个 cascader 用于选择版本
+
+            }
+
+        }
+
         return null;
     }
 
