@@ -1,6 +1,8 @@
 package io.yingchi.visualsdgmongodb.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
@@ -8,10 +10,7 @@ import io.yingchi.visualsdgmongodb.util.FileObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -55,7 +54,9 @@ public class ServiceNodeController {
     }
 
     @PostMapping("/selectedService")
-    public void receiveSelectedService(HttpServletRequest request) {
+    public void receiveSelectedService(@RequestBody Object o) {
 
+        String jsonString = JSON.toJSONString(o);
+        JSONArray jsonArray = JSONArray.parseArray(jsonString); // [{},{}]
     }
 }
