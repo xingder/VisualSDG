@@ -43,10 +43,20 @@ public class VisualsdgMongodbApplicationTests {
         serviceTableData.forEach(x -> System.out.println(x));
     }
 
+    /**
+     * 测试获取已存在服务名单
+     */
     @Test
     public void getAllExistingServiceNameListTest() {
         List<String> allExistingServiceNameList = serviceNodeService.getAllExistingServiceNameList();
         allExistingServiceNameList.forEach(x -> System.out.println(x));
+    }
+
+    @Test
+    public void getCascaderOptionsDataTest() {
+        List<List<Map<String, Object>>> cascaderOptionsData = webDataService.getCascaderOptionsData();
+        cascaderOptionsData.forEach(x -> System.out.println(x));
+
     }
 
 }

@@ -48,4 +48,9 @@ public class ServiceNodeController {
     public List<Map<String, Object>> fetchServicesTableData() {
         return webDataService.getServiceTableData();
     }
+
+    @GetMapping("/cascaders")
+    public List<List<Map<String, Object>>> fetchCascaderOptionsData() {
+        return webDataService.getCascaderOptionsData();
+    }
 }

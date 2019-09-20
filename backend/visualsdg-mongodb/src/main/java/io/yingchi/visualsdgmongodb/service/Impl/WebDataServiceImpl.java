@@ -2,6 +2,7 @@ package io.yingchi.visualsdgmongodb.service.Impl;
 
 import io.yingchi.visualsdgmongodb.entity.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
+import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ import java.util.Map;
 public class WebDataServiceImpl implements WebDataService {
     @Autowired
     ServiceNodeRepository serviceNodeRepository;
+
+    @Autowired
+    ServiceNodeService serviceNodeService;
 
     Logger logger = LoggerFactory.getLogger(Logger.class);
 
@@ -46,20 +50,34 @@ public class WebDataServiceImpl implements WebDataService {
 
     @Override
     public List<List<Map<String, Object>>> getCascaderOptionsData() {
+        List<String> serviceNameList = serviceNodeService.getAllExistingServiceNameList();
+        List<List<Map<String, Object>>> cascaders = new ArrayList<>(); // 新建 cascader 的列表
 
-        List<ServiceNode> serviceNodesFound = serviceNodeRepository.findAll();
-        if (serviceNodesFound != null) {
-            List<List<Map<String, Object>>> cascaders = new ArrayList<>(); // 新建 cascader 的列表
-            for (ServiceNode serviceNode : serviceNodesFound) {
-                String serviceName = serviceNode.getServiceName(); // 获取服务名，检查是否重复
+        if (serviceNameList != null) {
+            // 当现有服务列表不为空时
+            for (String serviceName : serviceNameList) {
+                // 遍历所有服务类别
+                List<Map<String, Object>> cascader = new ArrayList<>(); // 为当前服务新建一个 cascader
+                Map<String, Object> itemFirstClass = new HashMap<>(); // 新建一个一级选项
+                itemFirstClass.put("value", serviceName);
+                itemFirstClass.put("label", serviceName);
+                List<Map<String, Object>> children = new ArrayList<>(); // 二级选项 children 列表
+                Map<String, Object> itemSecondClass; // 新建二级选项
+                List<ServiceNode> currentServiceList = serviceNodeRepository.findServiceNodesByServiceName(serviceName);
+                for (ServiceNode serviceNode : currentServiceList) {
+                    itemSecondClass = new HashMap<>();
+                    itemSecondClass.put("value", serviceNode.getVersion());
+                    itemSecondClass.put("label", serviceNode.getVersion());
 
-                List<Map<String, Object>> cascader = new ArrayList<>(); // 每个 service 对应一个 cascader 用于选择版本
-
+                    children.add(itemSecondClass); // 添加二级选项（版本名）
+                }
+                itemFirstClass.put("children", children);
+                cascader.add(itemFirstClass); // 添加一级选项（服务名）
+                cascaders.add(cascader); // 添加一个服务 cascader
             }
-
         }
 
-        return null;
+        return cascaders;
     }
 
     @Override
