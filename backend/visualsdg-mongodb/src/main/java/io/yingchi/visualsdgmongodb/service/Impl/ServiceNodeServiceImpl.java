@@ -38,4 +38,22 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
         logger.info("新 ServiceNode 已经添加：");
         logger.info(serviceNode.toString());
     }
+
+    @Override
+    public void delete(String serviceName, String version) {
+        List<ServiceNode> serviceNodesFound = serviceNodeRepository.findServiceNodesByServiceName(serviceName);
+
+        if (serviceNodesFound == null) {
+            logger.warn("不存在服务节点: " + serviceName + " 删除终止");
+        } else {
+            for (ServiceNode service : serviceNodesFound) {
+                if (service.getVersion().equals(version)) {
+                    serviceNodeRepository.delete(service);
+                    logger.info("已删除节点: " + serviceName + ": " + version);
+                    return;
+                }
+            }
+            logger.warn("不存在该版本同名服务节点: " + serviceName + ": " + version);
+        }
+    }
 }

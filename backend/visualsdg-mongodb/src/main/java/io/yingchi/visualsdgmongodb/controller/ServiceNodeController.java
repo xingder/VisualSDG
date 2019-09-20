@@ -29,8 +29,6 @@ public class ServiceNodeController {
         String jsonString = FileObjectUtil.getJsonStringFromYamlFileRequest(request);
         ResultYamlObject resObject = JSON.parseObject(jsonString, ResultYamlObject.class);
 
-//        logger.info("结果接收 Object 内容: " + resObject.toString());
-
         serviceNodeService.add(
                 resObject.getServiceName(),
                 resObject.getVersion(),
