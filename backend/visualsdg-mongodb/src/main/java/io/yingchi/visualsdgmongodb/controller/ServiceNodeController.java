@@ -1,15 +1,15 @@
 package io.yingchi.visualsdgmongodb.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
-import io.yingchi.visualsdgmongodb.entity.ServiceNode;
+import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
+import io.yingchi.visualsdgmongodb.util.FileObjectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -18,32 +18,24 @@ import java.io.IOException;
 @RestController
 public class ServiceNodeController {
 
+    Logger logger = LoggerFactory.getLogger(Logger.class);
+
+    @Autowired
+    ServiceNodeService serviceNodeService;
+
     @PostMapping("/service")
     public void createGraph(HttpServletRequest request) throws IOException {
 
-        MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+        String jsonString = FileObjectUtil.getJsonStringFromYamlFileRequest(request);
+        ResultYamlObject resObject = JSON.parseObject(jsonString, ResultYamlObject.class);
 
-        Yaml yaml = new Yaml();
-        Object load = yaml.load(file.getInputStream());
-        System.out.println(load);
+//        logger.info("结果接收 Object 内容: " + resObject.toString());
 
-        String s = JSON.toJSONString(load);
-        System.out.println(s);
-
-        ResultYamlObject resObject = JSON.parseObject(s, ResultYamlObject.class);
-
-
-        System.out.println(resObject.toString());
-
-        System.out.println("serviceName: " + resObject.getServiceName());
-        System.out.println("version: " + resObject.getVersion());
-
-//
-//        System.out.println(jsonObject);
-//
-//        ServiceNode serviceNode = JSONObject.toJavaObject(jsonObject, ServiceNode.class);
-//
-//        System.out.println(serviceNode.toString());
+        serviceNodeService.add(
+                resObject.getServiceName(),
+                resObject.getVersion(),
+                resObject.getEndpoints(),
+                resObject.getDependencies());
 
     }
 }

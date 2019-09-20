@@ -3,6 +3,9 @@ package io.yingchi.visualsdgmongodb.entity;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 用于接收 Yaml 上传后转换生成的 Object
+ */
 public class ResultYamlObject {
 
     private String serviceName;
