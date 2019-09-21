@@ -29,7 +29,7 @@
               <a-sub-menu key="sub1">
                 <span slot="title"><a-icon type="laptop" />依赖管理</span>
                 <a-menu-item><router-link to="/dependencyGraph">依赖拓扑</router-link></a-menu-item>
-                <a-menu-item><router-link to="/dataMaintanance">依赖列表</router-link></a-menu-item>
+                <a-menu-item><router-link to="/dataMaintanance">服务列表</router-link></a-menu-item>
                 <a-menu-item><router-link to="/graphGenerate">依赖生成</router-link></a-menu-item>
               </a-sub-menu>
               <a-sub-menu key="sub2">

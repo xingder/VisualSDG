@@ -1,5 +1,8 @@
 <template>
     <div class="service-list">
+
+        <a-button type="primary" style="margin: 20px">上传依赖配置清单</a-button>
+
         <a-table :columns="columns" :dataSource="data">
             <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
             <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
