@@ -60,16 +60,12 @@ public class ServiceNodeController {
 
     @PostMapping("/selectedService")
     public void receiveSelectedService(@RequestBody Object o) {
-
+        selectedServiceRepository.deleteAll(); // 首先清空之前的已选择服务
         System.out.println(o);
-
         String jsonString = JSON.toJSONString(o);
-        JSONArray jsonArray = JSONArray.parseArray(jsonString); // [{},{}]
-
         List<SelectedService> selectedServices = JSONArray.parseArray(jsonString, SelectedService.class);
         selectedServiceRepository.saveAll(selectedServices);
 
-        System.out.println(jsonArray);
     }
 
     @GetMapping("/nodes")
