@@ -94,10 +94,14 @@ public class WebDataServiceImpl implements WebDataService {
         List<Map<String, Object>> nodes = new ArrayList<>(); // 声明并初始化 nodes 列表
         Map<String, Object> node; // 声明单个 node
 
-        Map<String, Object> itemStyleForService = new HashMap<>();
+        Map<String, Object> itemStyleForNormalService = new HashMap<>();
         Map<String, Object> itemStyleForEndpoint = new HashMap<>();
-        itemStyleForService.put("color", "blue");
+        Map<String, Object> itemStyleForEdgeService = new HashMap<>();
+        Map<String, Object> itemStyleForBaseService = new HashMap<>();
+        itemStyleForNormalService.put("color", "blue");
         itemStyleForEndpoint.put("color", "red");
+        itemStyleForEdgeService.put("color", "green");
+        itemStyleForBaseService.put("color", "black");
 
         if (allSelectedServices != null) {
             for (SelectedService selectedService : allSelectedServices) {
@@ -111,12 +115,20 @@ public class WebDataServiceImpl implements WebDataService {
                 node.put("categories", serviceName);
                 List<String> endpoints = serviceFound.getEndpoints();
                 if (endpoints != null) {
-                    // 有端点的服务，非 EdgeService
                     node.put("value", endpoints.size() * 5 + 30);
+                    if (serviceFound.getDependencies() != null) {
+                        // 提供服务，同时依赖别的服务
+                        node.put("itemStyle", itemStyleForNormalService);
+                    } else {
+                        // 提供服务，不依赖别的服务，BaseService
+                        node.put("itemStyle", itemStyleForBaseService);
+                    }
                 } else {
+                    // 不提供服务
                     node.put("value", 30);
+                    node.put("itemStyle", itemStyleForEdgeService);
                 }
-                node.put("itemStyle", itemStyleForService);
+
                 nodes.add(node);
 
                 // 添加 Service 下的 Endpoints
@@ -127,7 +139,7 @@ public class WebDataServiceImpl implements WebDataService {
                         node.put("name", endpointNodeName);
                         node.put("label", endpointNodeName);
                         node.put("categories", endpointNodeName);
-                        node.put("value", 20);
+                        node.put("value", 15);
                         node.put("itemStyle", itemStyleForEndpoint);
                         nodes.add(node);
                     }
