@@ -151,6 +151,7 @@ public class WebDataServiceImpl implements WebDataService {
         Map<String, Object> labelForEndpointLink = new HashMap<>(); // API Endpoint Link 标签
         Map<String, Object> lineStyleForEndpointLink = new HashMap<>(); // API Endpoint Link 标签
         labelForEndpointLink.put("formatter", "ENDPOINT");
+        labelForEndpointLink.put("show", true);
         lineStyleForEndpointLink.put("color", "blue");
         lineStyleForEndpointLink.put("width", 3);
 
@@ -158,6 +159,7 @@ public class WebDataServiceImpl implements WebDataService {
         Map<String, Object> lineStyleForInvokeLink = new HashMap<>(); // Invoke Link 标签
         List<String> symbolForInvokeLink = new ArrayList<>();
         labelForInvokeLink.put("formatter", "INVOKE");
+        labelForInvokeLink.put("show", true);
         lineStyleForInvokeLink.put("color", "orange");
         lineStyleForInvokeLink.put("width", 3);
         symbolForInvokeLink.add(0, "none");
@@ -177,7 +179,7 @@ public class WebDataServiceImpl implements WebDataService {
                         link = new HashMap<>();
                         link.put("source", serviceName);
                         link.put("target", serviceName + " " + endpoint);
-                        link.put("value", 80);
+                        link.put("value", 100);
                         link.put("label", labelForEndpointLink);
                         link.put("lineStyle", lineStyleForEndpointLink);
 
@@ -194,7 +196,7 @@ public class WebDataServiceImpl implements WebDataService {
                             link = new HashMap<>();
                             link.put("source", serviceName);
                             link.put("target", toService + " " + toEndpoint);
-                            link.put("value", 20);
+                            link.put("value", 5);
                             link.put("label", labelForInvokeLink);
                             link.put("lineStyle", lineStyleForInvokeLink);
                             link.put("symbol", symbolForInvokeLink);
