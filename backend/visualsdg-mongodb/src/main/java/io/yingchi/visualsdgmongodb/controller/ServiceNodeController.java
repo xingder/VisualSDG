@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
+import io.yingchi.visualsdgmongodb.entity.SelectedService;
+import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
 import io.yingchi.visualsdgmongodb.util.FileObjectUtil;
@@ -28,6 +30,9 @@ public class ServiceNodeController {
 
     @Autowired
     WebDataService webDataService;
+
+    @Autowired
+    SelectedServiceRepository selectedServiceRepository;
 
     @PostMapping("/service")
     public void createGraph(HttpServletRequest request) throws IOException {
@@ -56,7 +61,24 @@ public class ServiceNodeController {
     @PostMapping("/selectedService")
     public void receiveSelectedService(@RequestBody Object o) {
 
+        System.out.println(o);
+
         String jsonString = JSON.toJSONString(o);
         JSONArray jsonArray = JSONArray.parseArray(jsonString); // [{},{}]
+
+        List<SelectedService> selectedServices = JSONArray.parseArray(jsonString, SelectedService.class);
+        selectedServiceRepository.saveAll(selectedServices);
+
+        System.out.println(jsonArray);
+    }
+
+    @GetMapping("/nodes")
+    public List<Map<String, Object>> fetchAllGraphNodesData() {
+        return webDataService.getGraphNodesData();
+    }
+
+    @GetMapping("/links")
+    public List<Map<String, Object>> fetchAllGraphLinksData() {
+        return webDataService.getGraphLinksData();
     }
 }

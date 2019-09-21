@@ -25,7 +25,7 @@
                 axios.get(URL_GET_NODES).then(response => {
                     this.nodes = response.data;
                     this.drawGraph();
-                    // console.log(response)
+                    console.log(this.nodes)
                 }).catch((err)=>{
                     console.log("无法绘制 nodes 数据: " + err)
                 });

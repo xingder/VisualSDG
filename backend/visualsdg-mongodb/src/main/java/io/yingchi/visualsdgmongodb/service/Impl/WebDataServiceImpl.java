@@ -1,6 +1,10 @@
 package io.yingchi.visualsdgmongodb.service.Impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import io.yingchi.visualsdgmongodb.entity.SelectedService;
 import io.yingchi.visualsdgmongodb.entity.ServiceNode;
+import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
@@ -9,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.ws.Endpoint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +23,9 @@ import java.util.Map;
 public class WebDataServiceImpl implements WebDataService {
     @Autowired
     ServiceNodeRepository serviceNodeRepository;
+
+    @Autowired
+    SelectedServiceRepository selectedServiceRepository;
 
     @Autowired
     ServiceNodeService serviceNodeService;
@@ -82,23 +90,127 @@ public class WebDataServiceImpl implements WebDataService {
 
     @Override
     public List<Map<String, Object>> getGraphNodesData() {
-        List<ServiceNode> serviceNodesFound = serviceNodeRepository.findAll();
-        if (serviceNodesFound == null) {
-            logger.error("数据库 ServiceNode 数据空，无法生成 nodes 数据");
-            return null;
-        } else {
-            List<Map<String, Object>> nodes = new ArrayList<>();
+        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取到依赖生成页面已经选择的 Service 列表
+        List<Map<String, Object>> nodes = new ArrayList<>(); // 声明并初始化 nodes 列表
+        Map<String, Object> node; // 声明单个 node
 
-            for (ServiceNode service : serviceNodesFound) {
+        Map<String, Object> itemStyleForService = new HashMap<>();
+        Map<String, Object> itemStyleForEndpoint = new HashMap<>();
+        itemStyleForService.put("color", "blue");
+        itemStyleForEndpoint.put("color", "red");
 
+        if (allSelectedServices != null) {
+            for (SelectedService selectedService : allSelectedServices) {
+
+                String serviceName = selectedService.getServiceName();
+                String version = selectedService.getVersion();
+                ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
+                node = new HashMap<>();
+                node.put("name", serviceName);
+                node.put("label", serviceName);
+                node.put("categories", serviceName);
+                List<String> endpoints = serviceFound.getEndpoints();
+                if (endpoints != null) {
+                    // 有端点的服务，非 EdgeService
+                    node.put("value", endpoints.size() * 5 + 30);
+                } else {
+                    node.put("value", 30);
+                }
+                node.put("itemStyle", itemStyleForService);
+                nodes.add(node);
+
+                // 添加 Service 下的 Endpoints
+                if (endpoints != null) {
+                    for (String enpointName : endpoints) {
+                        String endpointNodeName = serviceName + " " + enpointName;
+                        node = new HashMap<>();
+                        node.put("name", endpointNodeName);
+                        node.put("label", endpointNodeName);
+                        node.put("categories", endpointNodeName);
+                        node.put("value", 20);
+                        node.put("itemStyle", itemStyleForEndpoint);
+                        nodes.add(node);
+                    }
+                }
             }
+            logger.info("add nodes finish");
+        } else {
+            logger.error("Selected Services 为空");
         }
 
-        return null;
+
+        return nodes;
     }
 
     @Override
     public List<Map<String, Object>> getGraphLinksData() {
-        return null;
+        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取到依赖生成页面已经选择的 Service 列表
+        List<Map<String, Object>> links = new ArrayList<>(); // 声明并初始化 nodes 列表
+        Map<String, Object> link; // 声明单个 node
+
+        Map<String, Object> labelForEndpointLink = new HashMap<>(); // API Endpoint Link 标签
+        Map<String, Object> lineStyleForEndpointLink = new HashMap<>(); // API Endpoint Link 标签
+        labelForEndpointLink.put("formatter", "ENDPOINT");
+        lineStyleForEndpointLink.put("color", "blue");
+        lineStyleForEndpointLink.put("width", 3);
+
+        Map<String, Object> labelForInvokeLink = new HashMap<>(); // Invoke Link 标签
+        Map<String, Object> lineStyleForInvokeLink = new HashMap<>(); // Invoke Link 标签
+        List<String> symbolForInvokeLink = new ArrayList<>();
+        labelForInvokeLink.put("formatter", "INVOKE");
+        lineStyleForInvokeLink.put("color", "orange");
+        lineStyleForInvokeLink.put("width", 3);
+        symbolForInvokeLink.add(0, "none");
+        symbolForInvokeLink.add(1, "arrow");
+
+        if (allSelectedServices != null) {
+            for (SelectedService selectedService : allSelectedServices) {
+
+                String serviceName = selectedService.getServiceName();
+                String version = selectedService.getVersion();
+                ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
+
+                List<String> endpoints = serviceFound.getEndpoints();
+                if (endpoints != null) {
+                    // 有端点的服务，非 EdgeService
+                    for (String endpoint : endpoints) {
+                        link = new HashMap<>();
+                        link.put("source", serviceName);
+                        link.put("target", serviceName + " " + endpoint);
+                        link.put("value", 80);
+                        link.put("label", labelForEndpointLink);
+                        link.put("lineStyle", lineStyleForEndpointLink);
+
+                        links.add(link);
+                    }
+                }
+
+                List<Map<String, Object>> dependencies = serviceFound.getDependencies();
+                if (dependencies != null) {
+                    for (Map<String, Object> dependency : dependencies) {
+                        String toService = (String) dependency.get("serviceName");
+                        List<String> toEndpoints = (List<String>) dependency.get("endpoints");
+                        for (String toEndpoint : toEndpoints) {
+                            link = new HashMap<>();
+                            link.put("source", serviceName);
+                            link.put("target", toService + " " + toEndpoint);
+                            link.put("value", 20);
+                            link.put("label", labelForInvokeLink);
+                            link.put("lineStyle", lineStyleForInvokeLink);
+                            link.put("symbol", symbolForInvokeLink);
+
+                            links.add(link);
+                        }
+                    }
+                }
+
+            }
+        } else {
+            logger.error("Selected Services 为空");
+        }
+
+
+        return links;
     }
+
 }

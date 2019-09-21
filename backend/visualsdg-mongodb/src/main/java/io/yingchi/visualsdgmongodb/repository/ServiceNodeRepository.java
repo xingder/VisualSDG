@@ -12,4 +12,6 @@ public interface ServiceNodeRepository extends MongoRepository<ServiceNode, Stri
 
     public List<ServiceNode> findServiceNodesByServiceName(String serviceName);
 
+    public ServiceNode findServiceNodeByServiceNameAndVersion(String serviceName, String version);
+
 }
