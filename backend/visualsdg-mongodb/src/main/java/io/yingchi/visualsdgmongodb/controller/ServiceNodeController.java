@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
 import io.yingchi.visualsdgmongodb.entity.SelectedService;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
+import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
 import io.yingchi.visualsdgmongodb.util.FileObjectUtil;
@@ -34,6 +35,9 @@ public class ServiceNodeController {
     @Autowired
     SelectedServiceRepository selectedServiceRepository;
 
+    @Autowired
+    ServiceNodeRepository serviceNodeRepository;
+
     @PostMapping("/service")
     public void createGraph(HttpServletRequest request) throws IOException {
 
@@ -51,6 +55,13 @@ public class ServiceNodeController {
     @GetMapping("/service")
     public List<Map<String, Object>> fetchServicesTableData() {
         return webDataService.getServiceTableData();
+    }
+
+    @DeleteMapping("/service")
+    public boolean deleteService(@RequestParam("serviceName") String deleteService,
+                              @RequestParam("version") String deleteVersion) {
+        long counterForDeletedServices = serviceNodeRepository.deleteServiceNodeByServiceNameAndVersion(deleteService, deleteVersion);
+        return counterForDeletedServices != 0;
     }
 
     @GetMapping("/cascaders")

@@ -109,6 +109,9 @@ public class WebDataServiceImpl implements WebDataService {
                 String serviceName = selectedService.getServiceName();
                 String version = selectedService.getVersion();
                 ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
+                if (serviceFound == null) {
+                    continue; // 强行删除服务引起的已选择服务丢失数据
+                }
                 node = new HashMap<>();
                 node.put("name", serviceName);
                 node.put("label", serviceName);
@@ -183,7 +186,9 @@ public class WebDataServiceImpl implements WebDataService {
                 String serviceName = selectedService.getServiceName();
                 String version = selectedService.getVersion();
                 ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
-
+                if (serviceFound == null) {
+                    continue; // 强行删除服务导致的已选择服务数据丢失
+                }
                 List<String> endpoints = serviceFound.getEndpoints();
                 if (endpoints != null) {
                     // 有端点的服务，非 EdgeService

@@ -14,4 +14,6 @@ public interface ServiceNodeRepository extends MongoRepository<ServiceNode, Stri
 
     public ServiceNode findServiceNodeByServiceNameAndVersion(String serviceName, String version);
 
+    public long deleteServiceNodeByServiceNameAndVersion(String deleteService, String deleteVersion);
+
 }
