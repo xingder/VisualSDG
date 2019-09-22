@@ -74,7 +74,7 @@
     }];
 
     export default {
-        name: "DataMaintanance",
+        name: "ServicesRegistry",
         data() {
             return {
                 data: [],

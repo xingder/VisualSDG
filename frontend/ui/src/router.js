@@ -17,11 +17,11 @@ export default new Router({
       name: 'home',
       component: Home,
       children: [
-        {path: '/formTest', component: () => import('./components/FormTest.vue')},
-        {path: '/dragUploadTest', component: () => import('./components/DragUploadTest.vue')},
-        {path: '/dependencyGraph', component: () => import('./components/echarts/DependencyGraph.vue')},
-        {path: '/dataMaintanance', component: () => import('./views/DependencyManagement/DataMaintanance.vue')},
-        {path: '/graphGenerate', component: () => import('./views/DependencyManagement/GraphGenerate.vue')},
+        {path: '/FormTest', component: () => import('./components/FormTest.vue')},
+        {path: '/DragUploadTest', component: () => import('./components/DragUploadTest.vue')},
+        {path: '/DependencyGraph', component: () => import('./components/echarts/DependencyGraph.vue')},
+        {path: '/ServicesRegistry', component: () => import('./views/DependencyManagement/ServicesRegistry.vue')},
+        {path: '/GraphGenerate', component: () => import('./views/DependencyManagement/GraphGenerate.vue')},
       ]
     },
     {
