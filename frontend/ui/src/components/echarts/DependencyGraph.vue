@@ -29,6 +29,10 @@
                     this.drawGraph();
                     // console.log(this.nodes)
                 }).catch((err)=>{
+                    this.$notification.open({
+                        message: '依赖图生成失败',
+                        description: "失败原因：" + err + " 请确认是否强制删除了当前服务依赖图中的服务节点",
+                    });
                     console.log("无法绘制 nodes 数据: " + err)
                 });
 

@@ -2,9 +2,10 @@ package io.yingchi.visualsdgmongodb.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
 import io.yingchi.visualsdgmongodb.entity.SelectedService;
+import io.yingchi.visualsdgmongodb.entity.SDGPlanList;
+import io.yingchi.visualsdgmongodb.repository.SDGPlanListRepository;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
@@ -38,6 +39,9 @@ public class ServiceNodeController {
     @Autowired
     ServiceNodeRepository serviceNodeRepository;
 
+    @Autowired
+    SDGPlanListRepository sdgPlanListRepository;
+
     @PostMapping("/service")
     public void createGraph(HttpServletRequest request) throws IOException {
 
@@ -59,7 +63,7 @@ public class ServiceNodeController {
 
     @DeleteMapping("/service")
     public boolean deleteService(@RequestParam("serviceName") String deleteService,
-                              @RequestParam("version") String deleteVersion) {
+                              @RequestParam("versions") String deleteVersion) {
         long counterForDeletedServices = serviceNodeRepository.deleteServiceNodeByServiceNameAndVersion(deleteService, deleteVersion);
         return counterForDeletedServices != 0;
     }
@@ -72,9 +76,11 @@ public class ServiceNodeController {
     @PostMapping("/selectedService")
     public void receiveSelectedService(@RequestBody Object o) {
         selectedServiceRepository.deleteAll(); // 首先清空之前的已选择服务
-        System.out.println(o);
         String jsonString = JSON.toJSONString(o);
+        System.out.println(jsonString);
         List<SelectedService> selectedServices = JSONArray.parseArray(jsonString, SelectedService.class);
+        SDGPlanList testPlan = new SDGPlanList("testPlan", selectedServices);
+        sdgPlanListRepository.save(testPlan);
         selectedServiceRepository.saveAll(selectedServices);
 
     }

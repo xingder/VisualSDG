@@ -140,7 +140,7 @@ public class WebDataServiceImpl implements WebDataService {
                 String version = selectedService.getVersion();
                 ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
                 if (serviceFound == null) {
-                    continue; // 强行删除服务引起的已选择服务丢失数据
+                    return null; // 强行删除服务引起的已选择服务丢失数据，返回空数据
                 }
                 node = new HashMap<>();
                 node.put("name", serviceName);
@@ -217,7 +217,7 @@ public class WebDataServiceImpl implements WebDataService {
                 String version = selectedService.getVersion();
                 ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
                 if (serviceFound == null) {
-                    continue; // 强行删除服务导致的已选择服务数据丢失
+                    return null; // 强行删除服务导致的已选择服务数据丢失，返回空数据
                 }
                 List<String> endpoints = serviceFound.getEndpoints();
                 if (endpoints != null) {

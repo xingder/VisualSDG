@@ -11,8 +11,8 @@
             <span slot="dependencies" slot-scope="dependencies"><a-tag v-for="dependency in dependencies" color="red">{{dependency}}</a-tag></span>
             <span slot="options" slot-scope="text, record">
 <!--              <a href="javascript:;">Invite 一 {{record.name}}</a>-->
-                <a-button type="danger" @click="showDeleteConfirm(record.service, record.version)">Delete</a-button>
-              <a-divider type="vertical" />
+                <a-button type="danger" @click="showDeleteConfirm(record.service, record.versions)">Delete</a-button>
+<!--              <a-divider type="vertical" />-->
             </span>
         </a-table>
 
@@ -27,7 +27,7 @@
                 @cancel="handleCancelDelete"
                 cancelText="取消"
         >
-            <p>您确定要删除 {{deleting_service.serviceName}} 的 {{deleting_service.version || "所有"}} 版本？此操作将有可能破坏已经生成的服务依赖关系图！</p>
+            <p>您确定要删除 {{deleting_service.serviceName}} 的 {{deleting_service.versions || "所有"}} 版本？此操作将有可能破坏已经生成的服务依赖关系图！</p>
         </a-modal>
 
         <a-drawer
@@ -56,7 +56,7 @@
         key: 'service',
         slots: { title: 'customTitle' },
     }, {
-        title: 'Version',
+        title: 'Versions',
         dataIndex: 'versions',
         key: 'versions',
         scopedSlots: { customRender: 'versions' },
@@ -83,7 +83,7 @@
                 confirmDeleteLoading: false,
                 deleting_service: {
                     serviceName: '',
-                    version: '',
+                    versions: [],
                 },
                 columns,
             }
@@ -125,11 +125,12 @@
             },
 
             // 显示删除确认框
-            showDeleteConfirm(serviceName,version) {
-                console.log("deleting: " + serviceName + " " + version);
+            showDeleteConfirm(serviceName, versions) {
+                console.log("deleting: " + serviceName + " " + versions);
                 this.deleting_service.serviceName = serviceName;
-                this.deleting_service.version = version;
+                this.deleting_service.versions = versions;
 
+                console.log("deleting: " + serviceName + " " + versions);
                 this.delete_confirm_visible = true;
             },
 
@@ -138,12 +139,12 @@
 
                 const URL_DELETE_SERVICE = 'http://localhost:8888/service';
 
-                for (var i = 0; i < this.deleting_service.version.length; i++) {
+                for (var i = 0; i < this.deleting_service.versions.length; i++) {
                     axios.delete(URL_DELETE_SERVICE, {params: {serviceName: this.deleting_service.serviceName,
-                            version: this.deleting_service.version[i]}}).then(response => {
+                            versions: this.deleting_service.versions[i]}}).then(response => {
                         console.log(response)
                         if (response.data === true) {
-                            this.$message.info('删除成功');
+                            this.$message.success('删除成功');
                             this.fetchData();
                         } else {
                             console.log("删除失败: response.data " + response.data);
@@ -155,14 +156,14 @@
                     });
                 }
                 this.deleting_service.serviceName = null;
-                this.deleting_service.version = null;
+                this.deleting_service.versions = null;
                 this.delete_confirm_visible = false; // 关闭
             },
 
             // 取消删除服务
             handleCancelDelete() {
                 this.deleting_service.serviceName = null;
-                this.deleting_service.version = null;
+                this.deleting_service.versions = null;
                 this.delete_confirm_visible = false; // 关闭
             },
 
