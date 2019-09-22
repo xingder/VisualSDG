@@ -34,21 +34,33 @@ public class WebDataServiceImpl implements WebDataService {
 
     @Override
     public List<Map<String, Object>> getServiceTableData() {
-        List<ServiceNode> serviceNodesFound = serviceNodeRepository.findAll();
-        if (serviceNodesFound != null) {
-            List<Map<String, Object>> servicesList = new ArrayList<>();
-            int counter = 0;
 
-            for (ServiceNode service : serviceNodesFound) {
-                Map<String, Object> row = new HashMap<>();
-                row.put("service", service.getServiceName()); // 服务名
-                row.put("version", service.getVersion()); // 服务版本
-                row.put("endpoints", service.getEndpoints()); // 端点列表
-                row.put("dependencies", service.getDependencies()); // 依赖列表
+        List<Map<String, Object>> servicesList = new ArrayList<>();
+        List<Map<String, Object>> servicesChildVersionList;
+        Map<String, Object> row, childRow;
+
+
+        List<String> allExistingServiceNameList = serviceNodeService.getAllExistingServiceNameList();
+        if (allExistingServiceNameList != null) {
+            for (String serviceName : allExistingServiceNameList) {
+                // 每一个已经存在的 service，每个 service 有不同版本
+                row = new HashMap<>();
+                row.put("service", serviceName);
+                List<ServiceNode> differentVersionServices = serviceNodeRepository.findServiceNodesByServiceName(serviceName);
+                servicesChildVersionList = new ArrayList<>();
+                for (ServiceNode differentVersionService : differentVersionServices) {
+                    // 同名 service 下每一个 version 的 service
+                    childRow = new HashMap<>();
+                    childRow.put("version", differentVersionService.getVersion());
+                    childRow.put("endpoints", differentVersionService.getEndpoints());
+                    childRow.put("dependencies", differentVersionService.getDependencies());
+                    servicesChildVersionList.add(childRow);
+                }
+                row.put("children", servicesChildVersionList);
 
                 servicesList.add(row);
-                counter++;
             }
+
             return servicesList;
         }
 

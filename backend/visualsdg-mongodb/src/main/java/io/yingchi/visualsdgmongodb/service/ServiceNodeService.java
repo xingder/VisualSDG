@@ -12,5 +12,5 @@ public interface ServiceNodeService {
 
     public void delete(String serviceName, String version);
 
-    public List<String> getAllExistingServiceNameList();
+    public List<String> getAllExistingServiceNameList(); // 获取服务库中服务名单
 }
