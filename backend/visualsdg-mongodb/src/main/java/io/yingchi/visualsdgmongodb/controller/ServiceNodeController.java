@@ -69,7 +69,7 @@ public class ServiceNodeController {
 
     @DeleteMapping("/service")
     public boolean deleteService(@RequestParam("serviceName") String deleteService,
-                              @RequestParam("versions") String deleteVersion) {
+                                 @RequestParam("versions") String deleteVersion) {
         long counterForDeletedServices = serviceNodeRepository.deleteServiceNodeByServiceNameAndVersion(deleteService, deleteVersion);
         return counterForDeletedServices != 0;
     }
@@ -106,4 +106,11 @@ public class ServiceNodeController {
     public List<Map<String, Object>> fetchAllGraphLinksData() {
         return webDataService.getGraphLinksData();
     }
+
+    @GetMapping("/check")
+    public Map<String, Object> serviceVersionChangeCheck() {
+
+        return serviceNodeService.serviceVersionChangeCheck("ServiceB", "v1.1");
+    }
+
 }

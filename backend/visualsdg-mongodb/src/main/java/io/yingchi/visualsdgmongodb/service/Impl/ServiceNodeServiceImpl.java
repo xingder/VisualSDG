@@ -1,6 +1,8 @@
 package io.yingchi.visualsdgmongodb.service.Impl;
 
+import io.yingchi.visualsdgmongodb.entity.SelectedService;
 import io.yingchi.visualsdgmongodb.entity.ServiceNode;
+import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import org.slf4j.Logger;
@@ -8,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ServiceNodeServiceImpl implements ServiceNodeService {
@@ -19,6 +19,9 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
 
     @Autowired
     private ServiceNodeRepository serviceNodeRepository;
+
+    @Autowired
+    SelectedServiceRepository selectedServiceRepository;
 
     @Override
     public void add(String serviceName, String version, List<String> endpoints, List<Map<String, Object>> dependencies) {
@@ -72,5 +75,86 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
             }
         }
         return serviceNameList;
+    }
+
+    @Override
+    public Map<String, Object> serviceVersionChangeCheck(String serviceName, String toVersion) {
+        Map<String, Object> checkReslut = new HashMap<>();
+
+        List<SelectedService> allCurrentRunningServices = selectedServiceRepository.findAll();
+        Set<String> necessaryEndpoints = new HashSet<>(); // 被依赖的端点，版本变更时关切
+        Set<Map<String, Object>> allAvaliableEndpoints = new HashSet<>();
+        Map<String, Object> currentServiceProvideEndpoints;
+
+
+        for (SelectedService currentRunningService : allCurrentRunningServices) {
+            if (currentRunningService.getServiceName().equals(serviceName)) {
+                continue; // 不统计当前服务节点
+            }
+            ServiceNode serviceNode = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(currentRunningService.getServiceName(), currentRunningService.getVersion());
+            // 当前运行的每一个节点
+            List<Map<String, Object>> dependencies = serviceNode.getDependencies();
+            // 获取所有依赖信息
+            if (dependencies != null) {
+                for (Map<String, Object> dependency : dependencies) {
+                    if (dependency.get("serviceName").equals(serviceName)) {
+                        List<String> endpoints = (List<String>) dependency.get("endpoints");
+                        for (String endpoint : endpoints) {
+                            necessaryEndpoints.add(endpoint);
+                        }
+                    }
+                }
+            }
+            List<String> currentServiceEndpoints = serviceNode.getEndpoints();
+            currentServiceProvideEndpoints = new HashMap<>();
+            currentServiceProvideEndpoints.put("serviceName", currentRunningService.getServiceName());
+            currentServiceProvideEndpoints.put("endpoints", currentServiceEndpoints);
+            allAvaliableEndpoints.add(currentServiceProvideEndpoints);
+
+        }
+
+        ServiceNode toVersionService = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, toVersion); // 变更到的版本
+        if (toVersionService == null) {
+            checkReslut.put("ableToChange", "no");
+            checkReslut.put("reason", "服务变更版本不存在");
+            return checkReslut;
+        }
+        List<String> endpoints = toVersionService.getEndpoints();
+        List<Map<String, Object>> dependencies = toVersionService.getDependencies();
+        for (String necessaryEndpoint : necessaryEndpoints) {
+            if (!endpoints.contains(necessaryEndpoint)) {
+                checkReslut.put("ableToChange", "no");
+                checkReslut.put("reason", "依赖的端点：" + necessaryEndpoint + " 变更版本后丢失");
+                return checkReslut;
+            }
+        }
+        for (Map<String, Object> dependency : dependencies) {
+            // 变更后的版本需要的依赖
+            String dependencyService = (String) dependency.get("serviceName"); // 依赖的服务
+            List<String> dependencyEndpoints = (List<String>) dependency.get("endpoints"); // 依赖的服务的端点
+
+            // 检查是否可以建立依赖
+            for (Map<String, Object> existDependency : allAvaliableEndpoints) {
+                if (existDependency.get("serviceName") == dependencyService) {
+                    List<String> canProvideEndpoints = (List<String>) existDependency.get("endpoints");
+                    // 检查
+                    for (String needEndpoint : dependencyEndpoints) {
+                        if (!canProvideEndpoints.contains(needEndpoint)) {
+                            // 对应的服务不能提供变更服务需要的端点
+                            checkReslut.put("ableToChange", "no");
+                            checkReslut.put("reason", "现有服务不能提供变更服务需要的端点");
+                            return checkReslut;
+                        }
+                    }
+                }
+            }
+
+
+        }
+        checkReslut.put("ableToChange", "yes");
+
+
+
+        return checkReslut;
     }
 }

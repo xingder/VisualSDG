@@ -13,4 +13,6 @@ public interface ServiceNodeService {
     public void delete(String serviceName, String version);
 
     public List<String> getAllExistingServiceNameList(); // 获取服务库中服务名单
+
+    public Map<String, Object> serviceVersionChangeCheck(String serviceName, String toVersion);
 }
