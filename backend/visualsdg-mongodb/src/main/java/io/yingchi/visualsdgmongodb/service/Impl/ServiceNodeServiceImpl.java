@@ -124,7 +124,7 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
         for (String necessaryEndpoint : necessaryEndpoints) {
             if (!endpoints.contains(necessaryEndpoint)) {
                 checkReslut.put("ableToChange", "no");
-                checkReslut.put("reason", "依赖的端点：" + necessaryEndpoint + " 变更版本后丢失");
+                checkReslut.put("reason", "当前体系依赖的服务端点 " + necessaryEndpoint + " 变更版本将丢失");
                 return checkReslut;
             }
         }
@@ -135,14 +135,15 @@ public class ServiceNodeServiceImpl implements ServiceNodeService {
 
             // 检查是否可以建立依赖
             for (Map<String, Object> existDependency : allAvaliableEndpoints) {
-                if (existDependency.get("serviceName") == dependencyService) {
+                if (existDependency.get("serviceName").equals(dependencyService)) {
                     List<String> canProvideEndpoints = (List<String>) existDependency.get("endpoints");
                     // 检查
                     for (String needEndpoint : dependencyEndpoints) {
+                        // 对于新版本中每一个依赖的端点，检查是否可以满足
                         if (!canProvideEndpoints.contains(needEndpoint)) {
                             // 对应的服务不能提供变更服务需要的端点
                             checkReslut.put("ableToChange", "no");
-                            checkReslut.put("reason", "现有服务不能提供变更服务需要的端点");
+                            checkReslut.put("reason", "当前版本 " + dependencyService + " 不能提供变更服务需要的端点 " + needEndpoint);
                             return checkReslut;
                         }
                     }
