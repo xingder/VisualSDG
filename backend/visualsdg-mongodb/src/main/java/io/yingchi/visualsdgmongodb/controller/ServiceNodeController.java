@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
 import io.yingchi.visualsdgmongodb.entity.SelectedService;
 import io.yingchi.visualsdgmongodb.entity.SDGPlanList;
+import io.yingchi.visualsdgmongodb.entity.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.SDGPlanListRepository;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
@@ -57,6 +58,11 @@ public class ServiceNodeController {
     }
 
     @GetMapping("/service")
+    public List<ServiceNode> fetchAllServicesData() {
+        return serviceNodeRepository.findAll();
+    }
+
+    @GetMapping("/serviceTable")
     public List<Map<String, Object>> fetchServicesTableData() {
         return webDataService.getServiceTableData();
     }
@@ -85,8 +91,14 @@ public class ServiceNodeController {
 
     }
 
+    @GetMapping("/selectedService")
+    public List<SelectedService> fetchSelectedServices() {
+        return selectedServiceRepository.findAll();
+    }
+
     @GetMapping("/nodes")
     public List<Map<String, Object>> fetchAllGraphNodesData() {
+
         return webDataService.getGraphNodesData();
     }
 
