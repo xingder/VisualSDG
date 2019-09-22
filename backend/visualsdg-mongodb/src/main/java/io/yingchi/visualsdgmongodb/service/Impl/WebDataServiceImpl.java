@@ -46,16 +46,25 @@ public class WebDataServiceImpl implements WebDataService {
                 // 每一个已经存在的 service，每个 service 有不同版本
                 row = new HashMap<>();
                 row.put("service", serviceName);
+
+                List<String> parentVersionList = new ArrayList<>();
                 List<ServiceNode> differentVersionServices = serviceNodeRepository.findServiceNodesByServiceName(serviceName);
                 servicesChildVersionList = new ArrayList<>();
                 for (ServiceNode differentVersionService : differentVersionServices) {
                     // 同名 service 下每一个 version 的 service
                     childRow = new HashMap<>();
-                    childRow.put("version", differentVersionService.getVersion());
+                    childRow.put("service", serviceName);
+                    String version = differentVersionService.getVersion();
+                    List<String> childVersionList = new ArrayList<>();
+                    childVersionList.add(version);
+                    childRow.put("version", childVersionList);
                     childRow.put("endpoints", differentVersionService.getEndpoints());
                     childRow.put("dependencies", differentVersionService.getDependencies());
                     servicesChildVersionList.add(childRow);
+
+                    parentVersionList.add(version);
                 }
+                row.put("version", parentVersionList);
                 row.put("children", servicesChildVersionList);
 
                 servicesList.add(row);
