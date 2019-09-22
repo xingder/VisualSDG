@@ -6,6 +6,7 @@
         <a-table :columns="columns" :dataSource="data">
             <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
             <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
+            <span slot="versions" slot-scope="versions"><a-tag v-for="version in versions" color="blue">{{version}}</a-tag></span>
             <span slot="endpoints" slot-scope="endpoints"><a-tag v-for="endpoint in endpoints" color="blue">{{endpoint}}</a-tag></span>
             <span slot="dependencies" slot-scope="dependencies"><a-tag v-for="dependency in dependencies" color="red">{{dependency}}</a-tag></span>
             <span slot="options" slot-scope="text, record">
@@ -26,7 +27,7 @@
                 @cancel="handleCancelDelete"
                 cancelText="取消"
         >
-            <p>您确定要删除 {{deleting_service.serviceName}} 的 {{deleting_service.version}} 版本？此操作将有可能破坏已经生成的服务依赖关系图！</p>
+            <p>您确定要删除 {{deleting_service.serviceName}} 的 {{deleting_service.version || "所有"}} 版本？此操作将有可能破坏已经生成的服务依赖关系图！</p>
         </a-modal>
 
         <a-drawer
@@ -52,12 +53,13 @@
 
     const columns = [{
         dataIndex: 'service',
+        key: 'service',
         slots: { title: 'customTitle' },
-        sortOrder: 'descend',
     }, {
         title: 'Version',
-        dataIndex: 'version',
-        scopedSlots: { customRender: 'version' },
+        dataIndex: 'versions',
+        key: 'versions',
+        scopedSlots: { customRender: 'versions' },
     }, {
         title: 'Endpoints',
         dataIndex: 'endpoints',
@@ -136,25 +138,25 @@
 
                 const URL_DELETE_SERVICE = 'http://localhost:8888/service';
 
-                axios.delete(URL_DELETE_SERVICE, {params: {serviceName: this.deleting_service.serviceName,
-                        version: this.deleting_service.version}}).then(response => {
-                    this.deleting_service.serviceName = null;
-                    this.deleting_service.version = null;
-                    this.delete_confirm_visible = false; // 关闭
-
-                    if (response.data === true) {
-                        this.$message.info('删除成功');
-                        this.fetchData();
-                    } else {
-                        console.log("删除失败: response.data " + response.data);
-                        this.$message.error('删除失败，未找到指定删除的服务');
-                    }
-                }).catch((err)=>{
-                    console.log("删除失败: " + err)
-                    this.$message.error('删除失败' + err);
-                });
-
-
+                for (var i = 0; i < this.deleting_service.version.length; i++) {
+                    axios.delete(URL_DELETE_SERVICE, {params: {serviceName: this.deleting_service.serviceName,
+                            version: this.deleting_service.version[i]}}).then(response => {
+                        console.log(response)
+                        if (response.data === true) {
+                            this.$message.info('删除成功');
+                            this.fetchData();
+                        } else {
+                            console.log("删除失败: response.data " + response.data);
+                            this.$message.error("删除失败，未找到指定删除的服务");
+                        }
+                    }).catch((err)=>{
+                        console.log("删除失败: " + err)
+                        this.$message.error('删除失败' + err);
+                    });
+                }
+                this.deleting_service.serviceName = null;
+                this.deleting_service.version = null;
+                this.delete_confirm_visible = false; // 关闭
             },
 
             // 取消删除服务

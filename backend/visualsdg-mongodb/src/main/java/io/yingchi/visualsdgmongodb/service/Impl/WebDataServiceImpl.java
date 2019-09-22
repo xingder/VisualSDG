@@ -38,36 +38,45 @@ public class WebDataServiceImpl implements WebDataService {
         List<Map<String, Object>> servicesList = new ArrayList<>();
         List<Map<String, Object>> servicesChildVersionList;
         Map<String, Object> row, childRow;
+        int serviceKey, versionsKey;
 
 
         List<String> allExistingServiceNameList = serviceNodeService.getAllExistingServiceNameList();
         if (allExistingServiceNameList != null) {
+            serviceKey = 1; // 加 key 否则报 Duplicate key 错误
             for (String serviceName : allExistingServiceNameList) {
                 // 每一个已经存在的 service，每个 service 有不同版本
                 row = new HashMap<>();
                 row.put("service", serviceName);
+                row.put("key", serviceKey);
 
                 List<String> parentVersionList = new ArrayList<>();
                 List<ServiceNode> differentVersionServices = serviceNodeRepository.findServiceNodesByServiceName(serviceName);
                 servicesChildVersionList = new ArrayList<>();
+
+                int counter = 1;
                 for (ServiceNode differentVersionService : differentVersionServices) {
                     // 同名 service 下每一个 version 的 service
                     childRow = new HashMap<>();
+                    versionsKey = serviceKey * 10000 + counter;
                     childRow.put("service", serviceName);
+                    childRow.put("key", versionsKey);
                     String version = differentVersionService.getVersion();
                     List<String> childVersionList = new ArrayList<>();
                     childVersionList.add(version);
-                    childRow.put("version", childVersionList);
+                    childRow.put("versions", childVersionList);
                     childRow.put("endpoints", differentVersionService.getEndpoints());
                     childRow.put("dependencies", differentVersionService.getDependencies());
                     servicesChildVersionList.add(childRow);
 
+                    counter++;
                     parentVersionList.add(version);
                 }
-                row.put("version", parentVersionList);
+                row.put("versions", parentVersionList);
                 row.put("children", servicesChildVersionList);
 
                 servicesList.add(row);
+                serviceKey++;
             }
 
             return servicesList;
