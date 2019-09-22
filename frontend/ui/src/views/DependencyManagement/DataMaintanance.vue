@@ -10,10 +10,24 @@
             <span slot="dependencies" slot-scope="dependencies"><a-tag v-for="dependency in dependencies" color="red">{{dependency}}</a-tag></span>
             <span slot="options" slot-scope="text, record">
 <!--              <a href="javascript:;">Invite 一 {{record.name}}</a>-->
-              <a href="javascript:;">Option</a>
+                <a-button type="danger" @click="showDeleteConfirm(record.service, record.version)">Delete</a-button>
               <a-divider type="vertical" />
             </span>
         </a-table>
+
+        <!-- 删除确认-->
+        <a-modal
+                title="删除服务"
+                :visible="delete_confirm_visible"
+                okText="确认删除"
+                okType="danger"
+                @ok="handleConfirmDelete"
+                :confirmLoading="confirmDeleteLoading"
+                @cancel="handleCancelDelete"
+                cancelText="取消"
+        >
+            <p>您确定要删除 {{deleting_service.serviceName}} 的 {{deleting_service.version}} 版本？此操作将有可能破坏已经生成的服务依赖关系图！</p>
+        </a-modal>
 
         <a-drawer
                 title="上传依赖配置清单文件"
@@ -63,6 +77,12 @@
             return {
                 data: [],
                 drawer_visible: false,
+                delete_confirm_visible: false,
+                confirmDeleteLoading: false,
+                deleting_service: {
+                    serviceName: '',
+                    version: '',
+                },
                 columns,
             }
         },
@@ -77,24 +97,76 @@
                     console.log("无法绘制 nodes 数据: " + err)
                 });
             },
+
+            // 显示服务上传 Drawer
             showDrawer() {
                 this.drawer_visible = true
             },
+
+            // 关闭服务上传 Drawer
             onClose() {
                 this.drawer_visible = false
             },
+
+            // 服务依赖配置清单上传监听
             handleChange(info) {
                 const status = info.file.status;
                 if (status !== 'uploading') {
                     console.log(info.file, info.fileList);
                 }
                 if (status === 'done') {
-                    this.$message.success(`${info.file.name} 上传成功`);
+                    this.$message.success(`服务依赖配置清单上传成功`);
+                    this.fetchData();
                 } else if (status === 'error') {
                     this.$message.error(`${info.file.name} 上传失败`);
                 }
             },
+
+            // 显示删除确认框
+            showDeleteConfirm(serviceName,version) {
+                console.log("deleting: " + serviceName + " " + version);
+                this.deleting_service.serviceName = serviceName;
+                this.deleting_service.version = version;
+
+                this.delete_confirm_visible = true;
+            },
+
+            // 确认删除服务
+            handleConfirmDelete() {
+
+                const URL_DELETE_SERVICE = 'http://localhost:8888/service';
+
+                axios.delete(URL_DELETE_SERVICE, {params: {serviceName: this.deleting_service.serviceName,
+                        version: this.deleting_service.version}}).then(response => {
+                    this.deleting_service.serviceName = null;
+                    this.deleting_service.version = null;
+                    this.delete_confirm_visible = false; // 关闭
+
+                    if (response.data === true) {
+                        this.$message.info('删除成功');
+                        this.fetchData();
+                    } else {
+                        console.log("删除失败: response.data " + response.data);
+                        this.$message.error('删除失败，未找到指定删除的服务');
+                    }
+                }).catch((err)=>{
+                    console.log("删除失败: " + err)
+                    this.$message.error('删除失败' + err);
+                });
+
+
+            },
+
+            // 取消删除服务
+            handleCancelDelete() {
+                this.deleting_service.serviceName = null;
+                this.deleting_service.version = null;
+                this.delete_confirm_visible = false; // 关闭
+            },
+
         },
+
+        // 挂载时钩子
         mounted() {
             this.fetchData();
         }
