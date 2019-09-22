@@ -8,7 +8,7 @@
         <a-modal
                 title="版本变更"
                 v-model="version_change_confirm_visible"
-                @ok="handleVersionChangeCheck"
+                @ok="handleVersionChangeConfirm"
                 okText="确认"
                 cancelText="取消"
         >
@@ -82,7 +82,6 @@
             },
 
             showVersionChangeConfirm(currentService, currentVersion) {
-                this.$message.info(currentService + " " + currentVersion);
                 this.currentSelectedService.serviceName = currentService;
                 this.currentSelectedService.version = currentVersion;
 
@@ -91,14 +90,34 @@
 
             // 版本变更可行性检查
             handleVersionChangeCheck(serviceName, toVersion) {
-                this.$message.info(serviceName + " " + toVersion );
 
+                const URL_GET_SERVICE_VERSION_CHANGE_CHECK = 'http://localhost:8888/serviceVersionChangeCheck';
+
+                axios.get(URL_GET_SERVICE_VERSION_CHANGE_CHECK, {params:{serviceName: serviceName,toVersion:toVersion}}).then(response => {
+                    let ableToChange = response.data.ableToChange;
+                    let reason = response.data.reason;
+
+                    if (ableToChange === "yes") {
+                        this.$message.success("经依赖性检查，可以进行版本变更");
+                    } else {
+                        this.$message.error("经依赖性检查，无法进行版本变更，原因：" + reason);
+                    }
+                }).catch((err) => {
+                    console.log("无法获取 serviceVersionChangeCheck 结果：" + err)
+                });
 
 
                 // this.version_change_confirm_visible = false;
             },
 
+            // 版本变更确认
+            handleVersionChangeConfirm() {
+                this.version_change_confirm_visible = false;
+            },
+
         },
+
+
         mounted() {
             this.fetchData();
         }

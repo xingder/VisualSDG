@@ -116,4 +116,8 @@ public class ServiceNodeController {
         return checkResult;
     }
 
+    @GetMapping("/deployList")
+    public List<Map<String, Object>> fetchDeployList() {
+        return webDataService.getDeployList();
+    }
 }

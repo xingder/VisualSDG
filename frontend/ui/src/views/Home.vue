@@ -31,7 +31,8 @@
                 <a-menu-item><router-link to="/DependencyGraph">依赖拓扑</router-link></a-menu-item>
                 <a-menu-item><router-link to="/ServicesRegistry">服务中心</router-link></a-menu-item>
                 <a-menu-item><router-link to="/GraphGenerate">依赖生成</router-link></a-menu-item>
-                <a-menu-item><router-link to="/DependencyManagement">依赖管理</router-link></a-menu-item>
+                <a-menu-item><router-link to="/DependencyManagement">服务变更</router-link></a-menu-item>
+                <a-menu-item><router-link to="/DeployManagement">部署管理</router-link></a-menu-item>
               </a-sub-menu>
               <a-sub-menu key="sub2">
                 <span slot="title"><a-icon type="notification" />设置/选项</span>

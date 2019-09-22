@@ -262,4 +262,89 @@ public class WebDataServiceImpl implements WebDataService {
         return links;
     }
 
+    /**
+     * 获取部署顺序列表
+     * @return
+     */
+    @Override
+    public List<Map<String, Object>> getDeployList() {
+        List<Map<String, Object>> deployList = new ArrayList<>();
+        Map<String, Object> deployNode;
+        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll();
+
+        List<Map<String, Object>> deployComputeList = new ArrayList<>(); // 当前需要计算的节点
+        Map<String, Object> serviceUnit; // serviceName:  outDegree:
+        int outDegree = 0; // 节点出度（当前阶段依赖的服务数量）
+        int deployed = 0;  // 当前已经安排部署的点
+        List<String> currentStageRemovedNodes; // 当前阶段移除的出度为 0 的节点
+
+        // 1. 初始化出度计算列表
+        for (SelectedService selectedService : allSelectedServices) {
+            ServiceNode selectedServiceNode = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(selectedService.getServiceName(), selectedService.getVersion());
+            serviceUnit = new HashMap<>();
+            List<Map<String, Object>> dependencies = selectedServiceNode.getDependencies();
+            if (dependencies == null) {
+                // 依赖列表为 null，出度为 0
+                outDegree = 0;
+            } else {
+                // 依赖列表存在，出度即为其容量
+                outDegree = dependencies.size();
+            }
+            serviceUnit.put("serviceName", selectedService.getServiceName());
+            serviceUnit.put("version", selectedService.getVersion());
+            serviceUnit.put("outDegree", outDegree);
+            serviceUnit.put("status", 0); // 0 未安排部署 1 已安排
+            deployComputeList.add(serviceUnit);
+        }
+
+        while (deployed != allSelectedServices.size()) {
+            // 2. 当已经安排部署的数量不等于当前选定的服务数量时循环
+
+            currentStageRemovedNodes = new ArrayList<>(); // 当前阶段移除的出度为 0 的点
+
+            for (Map<String, Object> currentNode : deployComputeList) {
+                // 选部署点阶段（找出度0）
+                deployNode = new HashMap<>();
+                outDegree = (int) currentNode.get("outDegree");
+                int status = (int) currentNode.get("status");
+                if (status != 1) {
+                    if (outDegree == 0) {
+                        // 存在出度为0的点，记为当前阶段移除点，并添加进部署清单
+                        String serviceName = (String) currentNode.get("serviceName");
+                        String version = (String) currentNode.get("version");
+                        currentStageRemovedNodes.add((String) currentNode.get("serviceName")); // 当前阶段移除点中加入当前节点名称
+
+                        deployNode.put("serviceName", serviceName);
+                        deployNode.put("version", version);
+                        deployList.add(deployed++, deployNode);
+
+                        currentNode.put("status", 1); // 已经安排
+                    }
+                }
+            }
+
+            for (Map<String, Object> currentNode : deployComputeList) {
+                // 更新各个节点的出度，只有依赖中包含上一轮移除的点的节点出度才会变化
+                String serviceName = (String) currentNode.get("serviceName");
+                String version = (String) currentNode.get("version");
+                ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
+                List<Map<String, Object>> dependencies = serviceFound.getDependencies();
+
+                if (dependencies != null) {
+                    for (Map<String, Object> dependency : dependencies) {
+                        String dependentServiceName = (String) dependency.get("serviceName");
+                        if (currentStageRemovedNodes.contains(dependentServiceName)) {
+                            // 移除的点在当前节点的依赖列表中，当前节点的出度 -1
+                            outDegree = (int) currentNode.get("outDegree");
+                            currentNode.put("outDegree", outDegree - 1);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return deployList;
+    }
+
 }
