@@ -74,6 +74,11 @@ public class ServiceNodeController {
         return counterForDeletedServices != 0;
     }
 
+    @DeleteMapping("/services")
+    public void deleteAllService() {
+        serviceNodeRepository.deleteAll();
+    }
+
     @GetMapping("/cascaders")
     public List<List<Map<String, Object>>> fetchCascaderOptionsData() {
         return webDataService.getCascaderOptionsData();
