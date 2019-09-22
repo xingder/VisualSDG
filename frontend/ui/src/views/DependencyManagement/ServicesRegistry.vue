@@ -90,7 +90,7 @@
         },
         methods: {
             fetchData() {
-                const URL_GET_SERVICE = 'http://localhost:8888/service';
+                const URL_GET_SERVICE = 'http://localhost:8888/serviceTable';
 
                 axios.get(URL_GET_SERVICE).then(response => {
                     this.data = response.data;
