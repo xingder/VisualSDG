@@ -107,10 +107,13 @@ public class ServiceNodeController {
         return webDataService.getGraphLinksData();
     }
 
-    @GetMapping("/check")
-    public Map<String, Object> serviceVersionChangeCheck() {
+    @GetMapping("/serviceVersionChangeCheck")
+    public Map<String, Object> serviceVersionChangeCheck(@RequestParam("serviceName") String serviceName,
+                                                         @RequestParam("toVersion") String toVersion) {
 
-        return serviceNodeService.serviceVersionChangeCheck("ServiceB", "v1.1");
+        Map<String, Object> checkResult = serviceNodeService.serviceVersionChangeCheck(serviceName, toVersion);
+        System.out.println(checkResult);
+        return checkResult;
     }
 
 }
