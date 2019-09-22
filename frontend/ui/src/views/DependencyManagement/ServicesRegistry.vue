@@ -2,6 +2,7 @@
     <div class="service-list">
 
         <a-button type="primary" style="margin: 20px" @click="showDrawer">上传依赖配置清单</a-button>
+        <a-button type="danger" style="margin: 20px" @click="showDeleteAllConfirm">删除所有服务</a-button>
 
         <a-table :columns="columns" :dataSource="data">
             <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
@@ -16,7 +17,7 @@
             </span>
         </a-table>
 
-        <!-- 删除确认-->
+        <!-- 列表服务删除确认-->
         <a-modal
                 title="删除服务"
                 :visible="delete_confirm_visible"
@@ -28,6 +29,18 @@
                 cancelText="取消"
         >
             <p>您确定要删除 {{deleting_service.serviceName}} 的 {{deleting_service.versions || "所有"}} 版本？此操作将有可能破坏已经生成的服务依赖关系图！</p>
+        </a-modal>
+
+        <!-- 全部删除确认-->
+        <a-modal
+                title="删除全部服务"
+                :visible="delete_all_confirm_visible"
+                okText="确认删除全部服务"
+                okType="danger"
+                @ok="handleConfirmDeleteAll"
+                cancelText="取消"
+        >
+            <p>您确定要删除全部服务</p>
         </a-modal>
 
         <a-drawer
@@ -80,6 +93,7 @@
                 data: [],
                 drawer_visible: false,
                 delete_confirm_visible: false,
+                delete_all_confirm_visible: false,
                 confirmDeleteLoading: false,
                 deleting_service: {
                     serviceName: '',
@@ -134,6 +148,11 @@
                 this.delete_confirm_visible = true;
             },
 
+            // 显示删除全部确认
+            showDeleteAllConfirm() {
+                this.delete_all_confirm_visible = true;
+            },
+
             // 确认删除服务
             handleConfirmDelete() {
 
@@ -158,6 +177,21 @@
                 this.deleting_service.serviceName = null;
                 this.deleting_service.versions = null;
                 this.delete_confirm_visible = false; // 关闭
+            },
+
+            // 确认删除全部服务
+            handleConfirmDeleteAll() {
+                const URL_DELETE_ALL_SERVICE = 'http://localhost:8888/services';
+
+                axios.delete(URL_DELETE_ALL_SERVICE).then(response => {
+                    this.$message.success('删除成功');
+                    this.fetchData();
+                }).catch((err)=>{
+                    console.log("删除失败: " + err)
+                    this.$message.error('删除失败' + err);
+                });
+
+                this.delete_all_confirm_visible = false;
             },
 
             // 取消删除服务
