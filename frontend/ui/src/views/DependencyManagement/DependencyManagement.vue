@@ -22,14 +22,23 @@
                 </div>
             </div>
 
+
         </a-modal>
 
         <div id="right-management-box">
             <h2>当前部署列表</h2>
-            <div v-for="service in currentRuningServices">
-                服务名：<span style="color: #42b983; font-weight: bolder">{{service.serviceName}}</span>  | 版本：{{service.version}} <a-button @click="showVersionChangeConfirm(service.serviceName,service.version)" style="margin: 3px"> 版本变更</a-button>
-            </div>
+            <div v-for="(currentService,index) in currentRuningServices" style="margin: 20px">
+                服务名：<span style="color: #42b983; font-weight: bolder">{{currentService.serviceName}}</span>
+                <a-divider type="vertical" />版本：{{currentService.version}} <a-divider type="vertical" />
 
+                <span v-if="selectedServicesMutiversionFlags[index]">
+                    <a-button @click="showVersionChangeConfirm(currentService.serviceName,currentService.version)" style="margin-left: 5px; font-size: 10px;" size="small" type="primary">版本变更</a-button>
+                </span>
+                <span v-else>
+                    <a-button style="margin-left: 5px; font-size: 10px" size="small" disabled>唯一版本</a-button>
+                </span>
+
+            </div>
 
         </div>
     </div>
@@ -59,12 +68,15 @@
                     height: '30px',
                     lineHeight: '30px',
                 },
+                multiVersionFlag: 0,
+                selectedServicesMutiversionFlags: [],
             }
         },
         methods: {
             fetchData() {
                 const URL_GET_SELECTED_SERVICES = 'http://localhost:8888/selectedService';
                 const URL_GET_ALL_SERVICES = 'http://localhost:8888/service';
+                const URL_GET_CHECK_MULTIVERSION = 'http://localhost:8888/selectedServicesMutiversionFlags';
 
                 axios.get(URL_GET_SELECTED_SERVICES).then(response => {
                     // console.log(response.data);
@@ -78,6 +90,13 @@
                     this.allServices = response.data;
                 }).catch((err) => {
                     console.log("无法获取 allService 数据: " + err)
+                });
+
+                axios.get(URL_GET_CHECK_MULTIVERSION).then(response => {
+                    // console.log(response.data)
+                    this.selectedServicesMutiversionFlags = response.data;
+                }).catch((err) => {
+                    console.log("无法获取 selectedServicesMutiversionFlags 数据: " + err)
                 });
             },
 
@@ -116,7 +135,6 @@
             },
 
         },
-
 
         mounted() {
             this.fetchData();

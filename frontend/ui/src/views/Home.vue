@@ -47,7 +47,7 @@
         </a-layout>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
-        Service Dependency Planner ©2019 Created by YINGCHI_Joey
+        VisualSDG ©2019 Created by YINGCHI_Joey
       </a-layout-footer>
     </a-layout>
   </div>
