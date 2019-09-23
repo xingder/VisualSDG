@@ -41,7 +41,7 @@
               </a-sub-menu>
             </a-menu>
           </a-layout-sider>
-          <a-layout-content :style="{ padding: '0 24px', minHeight: '280px' }">
+          <a-layout-content id="content-area" :style="{ padding: '0 24px', minHeight: '200px' }">
             <router-view></router-view>
           </a-layout-content>
         </a-layout>
@@ -89,5 +89,10 @@ export default {
 
     .ant-layout .ant-layout-has-sider {
         height: 800px;
+        overflow: scroll;
     }
+
+  #content-area {
+  }
+
 </style>

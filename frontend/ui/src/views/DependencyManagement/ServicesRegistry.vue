@@ -211,7 +211,10 @@
 </script>
 
 
-<style scoped>
+<style>
+    .service-list {
+
+    }
 
 </style>
 

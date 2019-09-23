@@ -65,14 +65,6 @@
 
             submitSelectedService() {
 
-                // if (this.selectedServices.length !== this.cascaders.length) {
-                //     // 确保全部服务均选择
-                //     alert("请确保为每个服务选择了版本");
-                //     this.cascaders = [];
-                //     this.fetchData();
-                //     return;
-                // }
-
                 const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
 
                 axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
@@ -118,6 +110,11 @@
 </script>
 
 <style>
+    .graphGenerate {
+        height: 100%;
+        overflow: hidden;
+
+    }
     .service-cascaders {
         text-align: center;
     }
@@ -129,14 +126,12 @@
     }
 
     #left {
+        float: left;
         width: 60%;
     }
 
     #right {
-        position: fixed;
-        right: 80px;
-        top: 200px;
-
+        float: right;
     }
 
 </style>

@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <div id="dependencyGraph"></div>
-    </div>
+    <div id="dependencyGraph"></div>
 </template>
 
 <script>

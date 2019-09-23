@@ -5,7 +5,7 @@
         </div>
         <div id="right">
             <h2>部署顺序</h2>
-            <a-button style="margin: 30px" @click="fetchData">生成部署顺序</a-button>
+            <a-button style="margin: 30px" @click="fetchData" type="primary">生成部署顺序</a-button>
             <a-timeline>
                 <div v-for="deploy in deploy_list">
                     <a-timeline-item>{{deploy.serviceName}} [{{deploy.version}}]</a-timeline-item>
@@ -47,12 +47,12 @@
 
 <style>
     #DMGraph {
+        float: left;
         width: 60%;
     }
 
     #right {
-        position: fixed;
-        right: 80px;
-        top: 200px;
+        float: right;
+
     }
 </style>

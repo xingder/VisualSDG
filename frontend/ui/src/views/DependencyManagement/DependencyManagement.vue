@@ -21,7 +21,12 @@
             <a-divider type="horizontal"/>
             <div>
                 <div style="font-weight: bold">待变更服务：</div>
-                    <a-tag style="margin: 10px" v-show="showChangeService === true && serviceChangeCheckedPassed === true"> {{markVersionChangeService.serviceName}} ==> {{markVersionChangeService.version}}</a-tag>
+                    <div v-if="showChangeService === true && serviceChangeCheckedPassed === true">
+                        <a-tag style="margin: 20px" v-show="showChangeService === true && serviceChangeCheckedPassed === true"> {{markVersionChangeService.serviceName}} ==> {{markVersionChangeService.version}}</a-tag>
+                    </div>
+                    <div v-else>
+                        <div style="margin: 20px">当前无需要变更的服务</div>
+                    </div>
             </div>
 
 
@@ -32,7 +37,7 @@
                 <a-button type="primary" style="margin-left: 30px" @click="executeSelectedServicesChange" disabled>执行变更</a-button>
             </span>
 
-            <a-button style="margin-left: 10px" @click="()=>{this.versionChangeServicesList=[]}">重置变更</a-button>
+            <a-button style="margin-left: 10px" @click="()=>{this.showChangeService = false}">重置变更</a-button>
 
 
         </div>
@@ -46,7 +51,7 @@
                 cancelText="取消"
         >
             <p v-if="markVersionChangeService.serviceName !== null" style="color: #00b93a; font-weight: bold">
-                依赖检测通过，是否确认变更到此服务：{{this.markVersionChangeService.serviceName}} [{{this.markVersionChangeService.version}}] ?
+                依赖检测通过，是否将服务 {{this.markVersionChangeService.serviceName}} [{{this.markVersionChangeService.version}}] 添加至待变更列表?
             </p>
 
             <div v-for="service in allServices">
@@ -193,12 +198,11 @@
 
 <style>
     #DMGraph {
+        float: left;
         width: 60%;
     }
 
     #right-management-box {
-        position: fixed;
-        right: 80px;
-        top: 200px;
+        float: right;
     }
 </style>
