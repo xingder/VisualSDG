@@ -4,6 +4,41 @@
             <DependencyGraph ref="graph"/>
         </div>
 
+        <div id="right-management-box">
+            <h2>当前部署列表</h2>
+            <div v-for="(currentService,index) in currentSelectedServices" style="margin: 20px">
+                服务名：<span style="color: #42b983; font-weight: bolder">{{currentService.serviceName}}</span>
+                <a-divider type="vertical" />版本：{{currentService.version}} <a-divider type="vertical" />
+
+                <span v-if="selectedServicesMutiversionFlags[index]">
+                    <a-button @click="showVersionChangeConfirm(currentService.serviceName,currentService.version)" style="margin-left: 5px; font-size: 10px;" size="small" >版本变更</a-button>
+                </span>
+                <span v-else>
+                    <a-button style="margin-left: 5px; font-size: 10px" size="small" disabled>唯一版本</a-button>
+                </span>
+
+            </div>
+            <a-divider type="horizontal"/>
+            <div>
+                <div style="font-weight: bold">待变更服务列表：</div>
+                <div v-for="service in versionChangeServicesList">
+                    <a-tag style="margin: 10px" v-if="service !== undefined">{{service}}</a-tag>
+                </div>
+            </div>
+
+
+            <span v-if="versionChangeServicesList[0] !== undefined">
+                <a-button type="primary" style="margin-left: 30px" @click="executeSelectedServicesChange">执行变更</a-button>
+            </span>
+            <span v-else>
+                <a-button type="primary" style="margin-left: 30px" @click="executeSelectedServicesChange" disabled>执行变更</a-button>
+            </span>
+
+            <a-button style="margin-left: 10px" @click="()=>{this.versionChangeServicesList=[]}">重置变更</a-button>
+
+
+        </div>
+
         <!-- 版本变更确认框-->
         <a-modal
                 title="版本变更"
@@ -12,7 +47,9 @@
                 okText="确认"
                 cancelText="取消"
         >
-
+            <p v-if="markVersionChangeService.serviceName !== null" style="color: #00b93a; font-weight: bold">
+                依赖检测通过，是否确认变更到此服务：{{this.markVersionChangeService.serviceName}} [{{this.markVersionChangeService.version}}] ?
+            </p>
 
             <div v-for="service in allServices">
                 <div v-if="service.serviceName === currentSelectedService.serviceName">
@@ -22,25 +59,10 @@
                 </div>
             </div>
 
-
         </a-modal>
 
-        <div id="right-management-box">
-            <h2>当前部署列表</h2>
-            <div v-for="(currentService,index) in currentRuningServices" style="margin: 20px">
-                服务名：<span style="color: #42b983; font-weight: bolder">{{currentService.serviceName}}</span>
-                <a-divider type="vertical" />版本：{{currentService.version}} <a-divider type="vertical" />
 
-                <span v-if="selectedServicesMutiversionFlags[index]">
-                    <a-button @click="showVersionChangeConfirm(currentService.serviceName,currentService.version)" style="margin-left: 5px; font-size: 10px;" size="small" type="primary">版本变更</a-button>
-                </span>
-                <span v-else>
-                    <a-button style="margin-left: 5px; font-size: 10px" size="small" disabled>唯一版本</a-button>
-                </span>
 
-            </div>
-
-        </div>
     </div>
 </template>
 
@@ -55,20 +77,21 @@
         },
         data() {
             return {
-                currentRuningServices: [], // 当前运行的服务列表
-                allServices: [], // 全部服务信息
+                allServices: [],
+                currentSelectedServices: [], // 当前选中的服务列表
+
+                markVersionChangeService: { // 当前检测通过的服务
+                    serviceName: '',
+                    version: '',
+                },
+
+                versionChangeServicesList: [], // 所有需要变更的服务列表
+
                 version_change_confirm_visible: false,
                 currentSelectedService: {
                     serviceName: '',
                     version: '',
                 },
-                value: 1,
-                radioStyle: {
-                    display: 'block',
-                    height: '30px',
-                    lineHeight: '30px',
-                },
-                multiVersionFlag: 0,
                 selectedServicesMutiversionFlags: [],
             }
         },
@@ -80,7 +103,7 @@
 
                 axios.get(URL_GET_SELECTED_SERVICES).then(response => {
                     // console.log(response.data);
-                    this.currentRuningServices = response.data;
+                    this.currentSelectedServices = response.data;
                 }).catch((err) => {
                     console.log("无法获取 selectedService 数据: " + err)
                 });
@@ -104,6 +127,9 @@
                 this.currentSelectedService.serviceName = currentService;
                 this.currentSelectedService.version = currentVersion;
 
+                this.markVersionChangeService.serviceName = null;
+                this.markVersionChangeService.version = null;
+
                 this.version_change_confirm_visible = true;
             },
 
@@ -118,6 +144,10 @@
 
                     if (ableToChange === "yes") {
                         this.$message.success("经依赖性检查，可以进行版本变更");
+                        this.markVersionChangeService.serviceName = serviceName;
+                        this.markVersionChangeService.version = toVersion;
+
+
                     } else {
                         this.$message.error("经依赖性检查，无法进行版本变更，原因：" + reason);
                     }
@@ -132,7 +162,29 @@
             // 版本变更确认
             handleVersionChangeConfirm() {
                 this.version_change_confirm_visible = false;
+                this.versionChangeServicesList.push({
+                    serviceName: this.markVersionChangeService.serviceName,
+                    version: this.markVersionChangeService.version
+                });
+                this.markVersionChangeService.serviceName = null;
+                this.markVersionChangeService.version = null;
             },
+
+            executeSelectedServicesChange() {
+                const URL_GET_VERSION_CHANGED_SELECTED_SERVICES = 'http://localhost:8888/SelectedServices/VersionChanged';
+
+                for (var i = 0; i < this.versionChangeServicesList.length; i++) {
+                    axios.get(URL_GET_VERSION_CHANGED_SELECTED_SERVICES, {params:{serviceName: this.versionChangeServicesList[i].serviceName,toVersion: this.versionChangeServicesList[i].version}}).then(response => {
+                        // console.log(response.data);
+                        this.$refs.graph.fetchDataAndDrawGraph();
+                        this.fetchData();
+                        this.versionChangeServicesList = [];
+                    }).catch((err) => {
+                        console.log("执行 executeSelectedServicesChange 响应错误：" + err)
+                    });
+                }
+
+            }
 
         },
 
