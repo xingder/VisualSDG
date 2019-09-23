@@ -20,14 +20,12 @@
             </div>
             <a-divider type="horizontal"/>
             <div>
-                <div style="font-weight: bold">待变更服务列表：</div>
-                <div v-for="service in versionChangeServicesList">
-                    <a-tag style="margin: 10px" v-if="service !== undefined">{{service}}</a-tag>
-                </div>
+                <div style="font-weight: bold">待变更服务：</div>
+                    <a-tag style="margin: 10px" v-show="showChangeService === true && serviceChangeCheckedPassed === true"> {{markVersionChangeService.serviceName}} ==> {{markVersionChangeService.version}}</a-tag>
             </div>
 
 
-            <span v-if="versionChangeServicesList[0] !== undefined">
+            <span v-if="showChangeService === true && serviceChangeCheckedPassed === true">
                 <a-button type="primary" style="margin-left: 30px" @click="executeSelectedServicesChange">执行变更</a-button>
             </span>
             <span v-else>
@@ -92,6 +90,8 @@
                     serviceName: '',
                     version: '',
                 },
+                showChangeService: false,
+                serviceChangeCheckedPassed: false,
                 selectedServicesMutiversionFlags: [],
             }
         },
@@ -131,6 +131,8 @@
                 this.markVersionChangeService.version = null;
 
                 this.version_change_confirm_visible = true;
+                this.serviceChangeCheckedPassed = false;
+                this.showChangeService = false;
             },
 
             // 版本变更可行性检查
@@ -146,7 +148,7 @@
                         this.$message.success("经依赖性检查，可以进行版本变更");
                         this.markVersionChangeService.serviceName = serviceName;
                         this.markVersionChangeService.version = toVersion;
-
+                        this.serviceChangeCheckedPassed = true;
 
                     } else {
                         this.$message.error("经依赖性检查，无法进行版本变更，原因：" + reason);
@@ -162,27 +164,22 @@
             // 版本变更确认
             handleVersionChangeConfirm() {
                 this.version_change_confirm_visible = false;
-                this.versionChangeServicesList.push({
-                    serviceName: this.markVersionChangeService.serviceName,
-                    version: this.markVersionChangeService.version
-                });
-                this.markVersionChangeService.serviceName = null;
-                this.markVersionChangeService.version = null;
+                this.showChangeService = true;
             },
 
             executeSelectedServicesChange() {
-                const URL_GET_VERSION_CHANGED_SELECTED_SERVICES = 'http://localhost:8888/SelectedServices/VersionChanged';
+                const URL_GET_VERSION_CHANGED_SELECTED_SERVICE = 'http://localhost:8888/SelectedServices/VersionChanged';
 
-                for (var i = 0; i < this.versionChangeServicesList.length; i++) {
-                    axios.get(URL_GET_VERSION_CHANGED_SELECTED_SERVICES, {params:{serviceName: this.versionChangeServicesList[i].serviceName,toVersion: this.versionChangeServicesList[i].version}}).then(response => {
-                        // console.log(response.data);
-                        this.$refs.graph.fetchDataAndDrawGraph();
-                        this.fetchData();
-                        this.versionChangeServicesList = [];
-                    }).catch((err) => {
-                        console.log("执行 executeSelectedServicesChange 响应错误：" + err)
-                    });
-                }
+                axios.get(URL_GET_VERSION_CHANGED_SELECTED_SERVICE, {params:{serviceName: this.markVersionChangeService.serviceName,toVersion: this.markVersionChangeService.version}}).then(response => {
+                    // console.log(response.data);
+                    this.$refs.graph.fetchDataAndDrawGraph();
+                    this.fetchData();
+                    this.showChangeService = false;
+                    this.serviceChangeCheckedPassed = false;
+                }).catch((err) => {
+                    console.log("执行 executeSelectedServicesChange 响应错误：" + err)
+                });
+
 
             }
 
