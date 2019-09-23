@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface SelectedServiceRepository extends MongoRepository<SelectedService, String> {
     public SelectedService findSelectedServiceByServiceName(String serviceName);
 
-
+    public void deleteSelectedServiceByServiceName(String serviceName);
 }

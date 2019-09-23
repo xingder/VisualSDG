@@ -9,6 +9,7 @@ import io.yingchi.visualsdgmongodb.entity.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.SDGPlanListRepository;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
+import io.yingchi.visualsdgmongodb.service.SelectedServiceService;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
 import io.yingchi.visualsdgmongodb.util.FileObjectUtil;
@@ -42,6 +43,9 @@ public class ServiceNodeController {
 
     @Autowired
     SDGPlanListRepository sdgPlanListRepository;
+
+    @Autowired
+    SelectedServiceService selectedServiceService;
 
     @PostMapping("/service")
     public void createGraph(HttpServletRequest request) throws IOException {
@@ -129,5 +133,12 @@ public class ServiceNodeController {
     @GetMapping("/selectedServicesMutiversionFlags")
     public List<Boolean> fetchSelectedServicesMutiversionFlags() {
         return webDataService.getSelectedServicesMutiversionFlags();
+    }
+
+    @GetMapping("/SelectedServices/VersionChanged")
+    public void executeSelectedServicesChange(@RequestParam("serviceName") String serviceName,
+                                                 @RequestParam("toVersion") String toVersion) {
+        selectedServiceService.executeSelectedServicesChange(serviceName, toVersion);
+
     }
 }
