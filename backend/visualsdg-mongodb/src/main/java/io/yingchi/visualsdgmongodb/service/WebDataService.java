@@ -16,4 +16,6 @@ public interface WebDataService {
     public List<Map<String, Object>> getGraphLinksData();  // 获取 links 据用于 ECharts Graph
 
     public List<Map<String, Object>> getDeployList();
+
+    List<Boolean> getSelectedServicesMutiversionFlags();
 }

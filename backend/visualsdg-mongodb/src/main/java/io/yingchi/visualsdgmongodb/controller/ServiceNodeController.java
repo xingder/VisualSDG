@@ -125,4 +125,9 @@ public class ServiceNodeController {
     public List<Map<String, Object>> fetchDeployList() {
         return webDataService.getDeployList();
     }
+
+    @GetMapping("/selectedServicesMutiversionFlags")
+    public List<Boolean> fetchSelectedServicesMutiversionFlags() {
+        return webDataService.getSelectedServicesMutiversionFlags();
+    }
 }

@@ -347,4 +347,29 @@ public class WebDataServiceImpl implements WebDataService {
         return deployList;
     }
 
+    @Override
+    public List<Boolean> getSelectedServicesMutiversionFlags() {
+        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll();
+        List<ServiceNode> allServices = serviceNodeRepository.findAll();
+        List<Boolean> selectedServicesMultiversionFlags = new ArrayList<>();
+
+        for (SelectedService selectedService : allSelectedServices) {
+            int flag = 0;
+            for (ServiceNode serviceNode : allServices) {
+                if (serviceNode.getServiceName().equals(selectedService.getServiceName()) && !serviceNode.getVersion().equals(selectedService.getVersion())) {
+                    // 服务中心中存在同名不同版本服务
+                    flag = 1;
+                }
+            }
+
+            if (flag == 1) {
+                selectedServicesMultiversionFlags.add(true);
+            } else {
+                selectedServicesMultiversionFlags.add(false);
+            }
+
+        }
+        return selectedServicesMultiversionFlags;
+    }
+
 }
