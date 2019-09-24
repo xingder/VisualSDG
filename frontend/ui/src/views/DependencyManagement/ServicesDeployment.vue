@@ -63,12 +63,7 @@
         data() {
             return {
                 cascaders: [],
-                selectedServices: [
-                    {
-                        serviceName: '',
-                        version: '',
-                    },
-                ], // 选择的服务及版本列表
+                selectedServices: [], // 选择的服务及版本列表
                 showDeploySequencesConfirm: false,
                 deploy_list: [],
             }
