@@ -19,7 +19,7 @@ export default new Router({
       children: [
         {path: '/FormTest', component: () => import('./components/FormTest.vue')},
         {path: '/DragUploadTest', component: () => import('./components/DragUploadTest.vue')},
-        {path: '/DependencyGraph', component: () => import('./components/echarts/DependencyGraph.vue')},
+        {path: '/DependencyGraph', component: () => import('./views/DependencyManagement/DependencyGraph.vue')},
         {path: '/ServicesRegistry', component: () => import('./views/DependencyManagement/ServicesRegistry.vue')},
         {path: '/ServicesDeployment', component: () => import('./views/DependencyManagement/ServicesDeployment.vue')},
         {path: '/ServiceVersionChange', component: () => import('./views/DependencyManagement/ServiceVersionChange.vue')},

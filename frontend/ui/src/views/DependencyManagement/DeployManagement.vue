@@ -5,7 +5,7 @@
         </div>
         <div id="right">
             <h2>部署顺序</h2>
-            <a-button style="margin: 30px" @click="fetchData" type="primary">生成部署顺序</a-button>
+            <a-button style="margin: 30px" @click="fetchDeploySequences" type="primary">生成部署顺序</a-button>
             <a-timeline>
                 <div v-for="deploy in deploy_list">
                     <a-timeline-item>{{deploy.serviceName}} [{{deploy.version}}]</a-timeline-item>
@@ -17,7 +17,7 @@
 
 <script>
     import axios from 'axios';
-    import DependencyGraph from '../../components/echarts/DependencyGraph.vue';
+    import DependencyGraph from './DependencyGraph.vue';
 
     export default {
         name: "DeployManagement",
@@ -30,7 +30,7 @@
             }
         },
         methods: {
-            fetchData() {
+            fetchDeploySequences() {
                 const URL_GET_DEPLOY_LIST = 'http://localhost:8888/deployList';
                 axios.get(URL_GET_DEPLOY_LIST).then(response => {
                     this.deploy_list = response.data;

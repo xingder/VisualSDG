@@ -1,12 +1,12 @@
 <template>
-    <div class="graphGenerate">
+    <div class="ServicesDeployment">
 
         <div id="left">
             <DependencyGraph  ref="graph"/>
         </div>
 
         <div id="right">
-            <h2>依赖生成</h2>
+            <h2>服务部署</h2>
             <p>服务端检索到已存在 {{cascaders.length}} 个服务</p>
             <p>当前已选择 {{selectedServices.length}} 个服务</p>
 
@@ -18,10 +18,31 @@
 
             <div style="text-align: center; margin: 30px">
                 <a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交/生成</a-button>
-
                 <a-button type="primary" style="width: 100px; margin: 10px" @click="resetSelect">重置</a-button>
             </div>
         </div>
+
+
+        <!-- 服务部署序列确认对话框 -->
+        <a-modal
+                title="服务部署序列确认"
+                v-model="showDeploySequencesConfirm"
+                @ok="handleDeploySequencesConfirm"
+                okText="确认"
+                cancelText="取消"
+        >
+
+            <h2>部署顺序</h2>
+            <a-timeline>
+                <div v-if="deploy_list[0].serviceName !== undefined" v-for="deploy in deploy_list">
+                    <a-timeline-item>{{deploy.serviceName}} [{{deploy.version}}]</a-timeline-item>
+                </div>
+                <div v-else>
+                    <a-spin />
+                </div>
+            </a-timeline>
+
+        </a-modal>
 
     </div>
 
@@ -31,17 +52,24 @@
 
 <script>
     import axios from 'axios';
-    import DependencyGraph from '../../components/echarts/DependencyGraph.vue';
+    import DependencyGraph from './DependencyGraph.vue';
 
     export default {
-        name: "GraphGenerate",
+        name: "ServicesDeployment",
         components: {
             DependencyGraph,
         },
         data() {
             return {
                 cascaders: [],
-                selectedServices: [], // 选择的服务及版本列表
+                selectedServices: [
+                    {
+                        serviceName: '',
+                        version: '',
+                    },
+                ], // 选择的服务及版本列表
+                showDeploySequencesConfirm: false,
+                deploy_list: [],
             }
         },
         methods: {
@@ -64,18 +92,36 @@
             },
 
             submitSelectedService() {
-
+                this.showDeploySequencesConfirm = true;
                 const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
 
                 axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
-                    this.$refs.graph.fetchDataAndDrawGraph(); // 选择服务改变后 DependencyGraph 组件依赖图数据重新获取
-                    this.selectedServices = [];
-                    this.cascaders = [];
-                    this.fetchData();
+                    console.log(response)
+                    this.fetchDeploySequences(); // 上传后获取部署顺序
+
                 }).catch((err) => {
-                    console.log("无法绘制 nodes 数据: " + err)
+                    console.log("无法上传 selectedServices 数据: " + err)
                 });
 
+            },
+
+            fetchDeploySequences() {
+                const URL_GET_DEPLOY_LIST = 'http://localhost:8888/deployList';
+                axios.get(URL_GET_DEPLOY_LIST).then(response => {
+                    this.deploy_list = response.data;
+                    console.log(this.deploy_list)
+                }).catch((err) => {
+                    console.log("无法获取 deployList 数据: " + err)
+                    this.$message.error("无法获取 deployList 数据: " + err);
+                });
+            },
+
+            handleDeploySequencesConfirm() {
+                this.$refs.graph.fetchDataAndDrawGraph(); // 选择服务改变后 DependencyGraph 组件依赖图数据重新获取
+                this.fetchData();
+
+                this.showDeploySequencesConfirm = false;
+                this.deploy_list = [];
             },
 
             onChange(value) {
@@ -110,7 +156,7 @@
 </script>
 
 <style>
-    .graphGenerate {
+    .ServicesDeployment {
         height: 100%;
         overflow: hidden;
 

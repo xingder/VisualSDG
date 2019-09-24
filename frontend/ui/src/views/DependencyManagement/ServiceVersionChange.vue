@@ -71,7 +71,7 @@
 
 <script>
     import axios from 'axios';
-    import DependencyGraph from '../../components/echarts/DependencyGraph.vue';
+    import DependencyGraph from './DependencyGraph.vue';
 
     export default {
         name: "ServiceVersionChange",

@@ -83,6 +83,16 @@ public class ServiceNodeController {
         return webDataService.getCascaderOptionsData();
     }
 
+    @PostMapping("/selectedService")
+    public void receiveSelectedService(@RequestBody Object o) {
+        selectedServiceRepository.deleteAll(); // 首先清空之前的已选择服务
+        String jsonString = JSON.toJSONString(o);
+        System.out.println(jsonString);
+        List<SelectedService> selectedServices = JSONArray.parseArray(jsonString, SelectedService.class);
+        selectedServiceRepository.saveAll(selectedServices);
+
+    }
+
     @GetMapping("/selectedService")
     public List<SelectedService> fetchSelectedServices() {
         return selectedServiceRepository.findAll();
