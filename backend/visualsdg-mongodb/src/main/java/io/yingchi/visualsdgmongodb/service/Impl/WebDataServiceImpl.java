@@ -175,7 +175,6 @@ public class WebDataServiceImpl implements WebDataService {
                     }
                 }
             }
-            logger.info("add nodes finish");
         } else {
             logger.error("Selected Services 为空");
         }
@@ -290,9 +289,10 @@ public class WebDataServiceImpl implements WebDataService {
             } else {
                 // 依赖列表存在，出度即为其容量，这一步需要判断非空再操作，否则异常
                 outDegree = dependencies.size();
-                for (Map<String, Object> dependency : dependencies) {
+
+                for (Map<String, Object> dependency : dependencies) { // 增加此处代码，支持当服务依赖不完整时根据局部依赖生成
                     String serviceName = (String) dependency.get("serviceName");
-                    if (!allSelectedServicesNameList.contains(serviceName)) { // 如果依赖的服务并不在已经选择的服务中 TODO: 是否应该直接禁止继续
+                    if (!allSelectedServicesNameList.contains(serviceName)) { // 如果依赖的服务并不在已经选择的服务中，出度减1 TODO: 是否影响能否支持局部依赖生成
                         outDegree--;
                     }
                 }

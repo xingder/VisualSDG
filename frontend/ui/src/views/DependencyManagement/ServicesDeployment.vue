@@ -18,7 +18,8 @@
 
             <div style="text-align: center; margin: 30px">
                 <a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交/生成</a-button>
-                <a-button type="primary" style="width: 100px; margin: 10px" @click="resetSelect">重置</a-button>
+                <a-button style="width: 60px; margin: 10px" @click="resetSelect">重置</a-button>
+                <a-button type="danger" style="width: 100px; margin: 10px" @click="clearDeploy">清除部署</a-button>
             </div>
         </div>
 
@@ -89,6 +90,22 @@
                 this.selectedServices = [];
                 this.cascaders = [];
                 this.fetchData();
+            },
+
+            clearDeploy() {
+                this.selectedServices = [];
+
+                const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
+
+                axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
+                    console.log(response)
+                    this.$refs.graph.fetchDataAndDrawGraph();
+                    this.cascaders = [];
+                    this.fetchData();
+                }).catch((err) => {
+                    console.log("无法上传 selectedServices 数据: " + err)
+                });
+
             },
 
             submitSelectedService() {
