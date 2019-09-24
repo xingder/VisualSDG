@@ -17,7 +17,8 @@
             </div>
 
             <div style="text-align: center; margin: 30px">
-                <a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交/生成</a-button>
+                <span v-if="selectedServices.length !== 0"><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交方案</a-button></span>
+                <span v-else><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService" disabled>提交方案</a-button></span>
                 <a-button style="width: 60px; margin: 10px" @click="resetSelect">重置</a-button>
                 <a-button type="danger" style="width: 100px; margin: 10px" @click="clearDeploy">清除部署</a-button>
             </div>
@@ -29,11 +30,12 @@
                 title="服务部署序列确认"
                 v-model="showDeploySequencesConfirm"
                 @ok="handleDeploySequencesConfirm"
-                okText="确认"
-                cancelText="取消"
+                okText="确认部署"
+                cancelText="取消部署"
         >
 
             <h2>部署顺序</h2>
+            <a-divider type="horizontal"></a-divider>
             <a-timeline>
                 <div v-if="deploy_list[0].serviceName !== undefined" v-for="deploy in deploy_list">
                     <a-timeline-item>{{deploy.serviceName}} [{{deploy.version}}]</a-timeline-item>
