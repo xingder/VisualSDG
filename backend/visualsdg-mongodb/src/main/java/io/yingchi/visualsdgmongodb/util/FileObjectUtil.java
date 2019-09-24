@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class FileObjectUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(Logger.class);
+    private static Logger logger = LoggerFactory.getLogger(FileObjectUtil.class);
 
     /**
      * 上传的 YAML 文件转为 JSON 字符串

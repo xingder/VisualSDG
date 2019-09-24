@@ -27,7 +27,7 @@ public class WebDataServiceImpl implements WebDataService {
     @Autowired
     ServiceNodeService serviceNodeService;
 
-    Logger logger = LoggerFactory.getLogger(Logger.class);
+    Logger logger = LoggerFactory.getLogger(WebDataServiceImpl.class);
 
     @Override
     public List<Map<String, Object>> getServiceTableData() {
@@ -260,86 +260,84 @@ public class WebDataServiceImpl implements WebDataService {
     }
 
     /**
-     * 获取部署顺序列表
+     * 获取部署顺序列表，部署依赖检测是依据当前已选择的服务
      * @return
      */
     @Override
     public List<Map<String, Object>> getDeployList() {
-        List<Map<String, Object>> deployList = new ArrayList<>();
-        Map<String, Object> deployNode;
-        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll();
+        List<Map<String, Object>> deployList = new ArrayList<>(); // 新建部署序列
+        Map<String, Object> deployNode; // 部署序列中各部署节点的信息 map
+        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取当前所有已经选择部署的服务信息
 
-        List<Map<String, Object>> deployComputeList = new ArrayList<>(); // 当前需要计算的节点
-        Map<String, Object> serviceUnit; // serviceName:  outDegree:
+        List<Map<String, Object>> deployComputeList = new ArrayList<>(); // 当前需要计算的节点列表
+        Map<String, Object> serviceUnit; // 计算节点列表中各个节点当前的计算信息，包含 serviceName 和当前出度 outDegree
         int outDegree = 0; // 节点出度（当前阶段依赖的服务数量）
-        int deployed = 0;  // 当前已经安排部署的点
-        List<String> currentStageRemovedNodes; // 当前阶段移除的出度为 0 的节点
+        int deployed = 0;  // 部署序列中已经确定的部署服务数量
+        List<String> currentStageRemovedNodes; // 当前阶段计算后移除的出度为 0 的节点
 
-        // 1. 初始化出度计算列表
-        for (SelectedService selectedService : allSelectedServices) {
-            ServiceNode selectedServiceNode = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(selectedService.getServiceName(), selectedService.getVersion());
-            serviceUnit = new HashMap<>();
-            List<Map<String, Object>> dependencies = selectedServiceNode.getDependencies();
+        // 1. 利用所有已选择部署的服务信息，初始化出度计算列表
+        for (SelectedService selectedService : allSelectedServices) { // 对于当前已经选择部署的每个服务 selectedService
+            ServiceNode selectedServiceNode = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(selectedService.getServiceName(), selectedService.getVersion()); // 获取该服务对象的 PO (包含端点及依赖信息)
+            serviceUnit = new HashMap<>(); // 每个已选择部署的服务均初始化计算列表中的一个计算单元
+            List<Map<String, Object>> dependencies = selectedServiceNode.getDependencies(); // 获取当前选择节点的依赖信息用于初始化出度
             if (dependencies == null) {
                 // 依赖列表为 null，出度为 0
                 outDegree = 0;
             } else {
-                // 依赖列表存在，出度即为其容量
+                // 依赖列表存在，出度即为其容量，这一步需要判断非空再操作，否则异常
                 outDegree = dependencies.size();
             }
-            serviceUnit.put("serviceName", selectedService.getServiceName());
-            serviceUnit.put("version", selectedService.getVersion());
-            serviceUnit.put("outDegree", outDegree);
+            // 计算单元初始化其各个计算数据
+            serviceUnit.put("serviceName", selectedService.getServiceName()); // 服务名
+            serviceUnit.put("version", selectedService.getVersion()); // 服务版本
+            serviceUnit.put("outDegree", outDegree); // 初始化出度
             serviceUnit.put("status", 0); // 0 未安排部署 1 已安排
-            deployComputeList.add(serviceUnit);
+            deployComputeList.add(serviceUnit); // 计算节点列表中添加当前服务节点的初始计算单元
         }
 
-        while (deployed != allSelectedServices.size()) {
-            // 2. 当已经安排部署的数量不等于当前选定的服务数量时循环
+        // 2. 部署序列迭代计算阶段
+        while (deployed != allSelectedServices.size()) { // 当部署序列中已经确定的数量不等于选择部署的服务总数量时循环
 
-            currentStageRemovedNodes = new ArrayList<>(); // 当前阶段移除的出度为 0 的点
+            currentStageRemovedNodes = new ArrayList<>(); // 初始化当前阶段移除的出度为 0 的点列表
 
-            for (Map<String, Object> currentNode : deployComputeList) {
-                // 选部署点阶段（找出度0）
-                deployNode = new HashMap<>();
-                outDegree = (int) currentNode.get("outDegree");
-                int status = (int) currentNode.get("status");
-                if (status != 1) {
-                    if (outDegree == 0) {
-                        // 存在出度为0的点，记为当前阶段移除点，并添加进部署清单
-                        String serviceName = (String) currentNode.get("serviceName");
-                        String version = (String) currentNode.get("version");
-                        currentStageRemovedNodes.add((String) currentNode.get("serviceName")); // 当前阶段移除点中加入当前节点名称
+            // 2-1 部署序列更新
+            for (Map<String, Object> currentNode : deployComputeList) { // 对于计算节点列表中的每一个计算节点
+                outDegree = (int) currentNode.get("outDegree"); // 得到该计算节点的当前出度
+                int status = (int) currentNode.get("status"); // 检查其是否已经添加进部署序列
+                if (status != 1) { // 若未添加进部署序列则进行计算
+                    if (outDegree == 0) { // 当发现出度为 0 而且仍未添加进序列的节点时
+                        String serviceName = (String) currentNode.get("serviceName"); // 获取其服务名
+                        String version = (String) currentNode.get("version"); // 获取其版本
+                        currentStageRemovedNodes.add((String) currentNode.get("serviceName")); // 将其添加进本轮移除的名单中
 
-                        deployNode.put("serviceName", serviceName);
-                        deployNode.put("version", version);
-                        deployList.add(deployed++, deployNode);
+                        deployNode = new HashMap<>(); // 初始化一个部署序列节点信息
+                        deployNode.put("serviceName", serviceName); // 添加部署序列节点服务名
+                        deployNode.put("version", version); // 添加部署序列节点版本
+                        deployList.add(deployed++, deployNode); // 部署序列添加此节点，并将已经添加进部署序列的服务数量计数器自增更新
 
-                        currentNode.put("status", 1); // 已经安排
+                        currentNode.put("status", 1); // 标记状态已经添加进部署列表
                     }
                 }
             }
 
-            for (Map<String, Object> currentNode : deployComputeList) {
-                // 更新各个节点的出度，只有依赖中包含上一轮移除的点的节点出度才会变化
-                String serviceName = (String) currentNode.get("serviceName");
-                String version = (String) currentNode.get("version");
-                ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version);
-                List<Map<String, Object>> dependencies = serviceFound.getDependencies();
+            // 2-2 计算列表更新
+            for (Map<String, Object> currentNode : deployComputeList) { // 对于部署序列中的每一个计算节点，更新出度，只有依赖中包含上一轮移除的点的节点出度才会变化
+                String serviceName = (String) currentNode.get("serviceName"); // 获取当前计算节点的服务名
+                String version = (String) currentNode.get("version"); // 获取当前计算节点的版本
+                ServiceNode serviceFound = serviceNodeRepository.findServiceNodeByServiceNameAndVersion(serviceName, version); // 对应查找到当前计算节点映射服务对应的 PO，以得到具体的服务依赖信息
+                List<Map<String, Object>> dependencies = serviceFound.getDependencies(); // 获取服务依赖列表
 
-                if (dependencies != null) {
-                    for (Map<String, Object> dependency : dependencies) {
-                        String dependentServiceName = (String) dependency.get("serviceName");
-                        if (currentStageRemovedNodes.contains(dependentServiceName)) {
-                            // 移除的点在当前节点的依赖列表中，当前节点的出度 -1
-                            outDegree = (int) currentNode.get("outDegree");
-                            currentNode.put("outDegree", outDegree - 1);
+                if (dependencies != null) { // 当服务依赖不为空时，即不是 BaseService 时
+                    for (Map<String, Object> dependency : dependencies) { // 对于依赖列表中的每一项依赖
+                        String dependentServiceName = (String) dependency.get("serviceName"); // 获取该项依赖所依赖的服务名
+                        if (currentStageRemovedNodes.contains(dependentServiceName)) { // 若依赖的服务中包含了本轮移除的节点服务
+                            outDegree = (int) currentNode.get("outDegree"); // 首先获取该计算节点的出度信息
+                            currentNode.put("outDegree", outDegree - 1); // 更新该计算节点数据，将出度 -1
                         }
                     }
                 }
             }
         }
-
 
         return deployList;
     }
