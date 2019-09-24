@@ -268,6 +268,10 @@ public class WebDataServiceImpl implements WebDataService {
         List<Map<String, Object>> deployList = new ArrayList<>(); // 新建部署序列
         Map<String, Object> deployNode; // 部署序列中各部署节点的信息 map
         List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取当前所有已经选择部署的服务信息
+        List<String> allSelectedServicesNameList = new ArrayList<>(); // 获取已选择部署的服务名单
+        for (SelectedService selectedService : allSelectedServices) {
+            allSelectedServicesNameList.add(selectedService.getServiceName());
+        }
 
         List<Map<String, Object>> deployComputeList = new ArrayList<>(); // 当前需要计算的节点列表
         Map<String, Object> serviceUnit; // 计算节点列表中各个节点当前的计算信息，包含 serviceName 和当前出度 outDegree
@@ -286,6 +290,12 @@ public class WebDataServiceImpl implements WebDataService {
             } else {
                 // 依赖列表存在，出度即为其容量，这一步需要判断非空再操作，否则异常
                 outDegree = dependencies.size();
+                for (Map<String, Object> dependency : dependencies) {
+                    String serviceName = (String) dependency.get("serviceName");
+                    if (!allSelectedServicesNameList.contains(serviceName)) { // 如果依赖的服务并不在已经选择的服务中 TODO: 是否应该直接禁止继续
+                        outDegree--;
+                    }
+                }
             }
             // 计算单元初始化其各个计算数据
             serviceUnit.put("serviceName", selectedService.getServiceName()); // 服务名
