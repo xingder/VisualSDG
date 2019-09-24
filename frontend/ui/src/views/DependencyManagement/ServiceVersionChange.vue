@@ -1,11 +1,11 @@
 <template>
-    <div class="DependencyManagement">
+    <div class="ServiceVersionChange">
         <div id="DMGraph">
             <DependencyGraph ref="graph"/>
         </div>
 
         <div id="right-management-box">
-            <h2>当前部署列表</h2>
+            <h2>服务变更</h2>
             <div v-for="(currentService,index) in currentSelectedServices" style="margin: 20px">
                 服务名：<span style="color: #42b983; font-weight: bolder">{{currentService.serviceName}}</span>
                 <a-divider type="vertical" />版本：{{currentService.version}} <a-divider type="vertical" />
@@ -74,7 +74,7 @@
     import DependencyGraph from '../../components/echarts/DependencyGraph.vue';
 
     export default {
-        name: "DependencyManagement",
+        name: "ServiceVersionChange",
         components: {
             DependencyGraph,
         },

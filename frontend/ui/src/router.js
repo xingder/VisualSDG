@@ -21,8 +21,8 @@ export default new Router({
         {path: '/DragUploadTest', component: () => import('./components/DragUploadTest.vue')},
         {path: '/DependencyGraph', component: () => import('./components/echarts/DependencyGraph.vue')},
         {path: '/ServicesRegistry', component: () => import('./views/DependencyManagement/ServicesRegistry.vue')},
-        {path: '/GraphGenerate', component: () => import('./views/DependencyManagement/GraphGenerate.vue')},
-        {path: '/DependencyManagement', component: () => import('./views/DependencyManagement/DependencyManagement.vue')},
+        {path: '/ServicesDeployment', component: () => import('./views/DependencyManagement/ServicesDeployment.vue')},
+        {path: '/ServiceVersionChange', component: () => import('./views/DependencyManagement/ServiceVersionChange.vue')},
         {path: '/DeployManagement', component: () => import('./views/DependencyManagement/DeployManagement.vue')},
       ]
     },

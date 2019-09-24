@@ -30,8 +30,8 @@
                 <span slot="title"><a-icon type="laptop" />依赖管理</span>
                 <a-menu-item><router-link to="/DependencyGraph">依赖拓扑</router-link></a-menu-item>
                 <a-menu-item><router-link to="/ServicesRegistry">服务中心</router-link></a-menu-item>
-                <a-menu-item><router-link to="/GraphGenerate">依赖生成</router-link></a-menu-item>
-                <a-menu-item><router-link to="/DependencyManagement">服务变更</router-link></a-menu-item>
+                <a-menu-item><router-link to="/ServicesDeployment">服务部署</router-link></a-menu-item>
+                <a-menu-item><router-link to="/ServiceVersionChange">服务变更</router-link></a-menu-item>
                 <a-menu-item><router-link to="/DeployManagement">部署管理</router-link></a-menu-item>
               </a-sub-menu>
               <a-sub-menu key="sub2">
