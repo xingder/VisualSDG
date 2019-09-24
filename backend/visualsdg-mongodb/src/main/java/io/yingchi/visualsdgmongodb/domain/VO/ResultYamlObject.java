@@ -1,4 +1,4 @@
-package io.yingchi.visualsdgmongodb.entity;
+package io.yingchi.visualsdgmongodb.domain.VO;
 
 import java.util.List;
 import java.util.Map;

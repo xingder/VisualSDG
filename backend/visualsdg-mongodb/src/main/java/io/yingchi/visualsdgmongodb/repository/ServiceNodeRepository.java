@@ -1,8 +1,7 @@
 package io.yingchi.visualsdgmongodb.repository;
 
-import io.yingchi.visualsdgmongodb.entity.ServiceNode;
+import io.yingchi.visualsdgmongodb.domain.PO.ServiceNode;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

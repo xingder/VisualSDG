@@ -2,11 +2,9 @@ package io.yingchi.visualsdgmongodb.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import io.yingchi.visualsdgmongodb.entity.ResultYamlObject;
-import io.yingchi.visualsdgmongodb.entity.SelectedService;
-import io.yingchi.visualsdgmongodb.entity.SDGPlanList;
-import io.yingchi.visualsdgmongodb.entity.ServiceNode;
-import io.yingchi.visualsdgmongodb.repository.SDGPlanListRepository;
+import io.yingchi.visualsdgmongodb.domain.VO.ResultYamlObject;
+import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
+import io.yingchi.visualsdgmongodb.domain.PO.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.SelectedServiceService;
@@ -40,9 +38,6 @@ public class ServiceNodeController {
 
     @Autowired
     ServiceNodeRepository serviceNodeRepository;
-
-    @Autowired
-    SDGPlanListRepository sdgPlanListRepository;
 
     @Autowired
     SelectedServiceService selectedServiceService;
@@ -86,18 +81,6 @@ public class ServiceNodeController {
     @GetMapping("/cascaders")
     public List<List<Map<String, Object>>> fetchCascaderOptionsData() {
         return webDataService.getCascaderOptionsData();
-    }
-
-    @PostMapping("/selectedService")
-    public void receiveSelectedService(@RequestBody Object o) {
-        selectedServiceRepository.deleteAll(); // 首先清空之前的已选择服务
-        String jsonString = JSON.toJSONString(o);
-        System.out.println(jsonString);
-        List<SelectedService> selectedServices = JSONArray.parseArray(jsonString, SelectedService.class);
-        SDGPlanList testPlan = new SDGPlanList("testPlan", selectedServices);
-        sdgPlanListRepository.save(testPlan);
-        selectedServiceRepository.saveAll(selectedServices);
-
     }
 
     @GetMapping("/selectedService")

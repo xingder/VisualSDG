@@ -1,6 +1,5 @@
 package io.yingchi.visualsdgmongodb;
 
-import io.yingchi.visualsdgmongodb.entity.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;

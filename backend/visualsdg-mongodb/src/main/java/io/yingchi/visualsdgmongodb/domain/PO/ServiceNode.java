@@ -1,4 +1,4 @@
-package io.yingchi.visualsdgmongodb.entity;
+package io.yingchi.visualsdgmongodb.domain.PO;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
