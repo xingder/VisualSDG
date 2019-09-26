@@ -27,14 +27,19 @@
                     style="height: 100%"
             >
               <a-sub-menu key="sub1">
-                <span slot="title"><a-icon type="laptop" />依赖管理</span>
+                <span slot="title"><a-icon type="laptop" />服务管理</span>
                 <a-menu-item><router-link to="/DependencyGraph">依赖拓扑</router-link></a-menu-item>
                 <a-menu-item><router-link to="/ServicesRegistry">服务中心</router-link></a-menu-item>
+              </a-sub-menu>
+              <a-sub-menu key="sub2">
+                <span slot="title"><a-icon type="laptop" />部署管理</span>
                 <a-menu-item><router-link to="/ServicesDeployment">服务部署</router-link></a-menu-item>
+                <a-menu-item><router-link to="/TenantDeploy">租户方案</router-link></a-menu-item>
                 <a-menu-item><router-link to="/ServiceVersionChange">服务变更</router-link></a-menu-item>
                 <a-menu-item><router-link to="/DeployManagement">部署管理</router-link></a-menu-item>
               </a-sub-menu>
-              <a-sub-menu key="sub2">
+
+              <a-sub-menu>
                 <span slot="title"><a-icon type="notification" />设置/选项</span>
                 <a-menu-item key="1">可视化选项</a-menu-item>
                 <a-menu-item><router-link to="/DragUploadTest">上传测试</router-link></a-menu-item>
