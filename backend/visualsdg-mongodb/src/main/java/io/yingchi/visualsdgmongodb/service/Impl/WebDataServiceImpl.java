@@ -130,6 +130,7 @@ public class WebDataServiceImpl implements WebDataService {
         itemStyleForEdgeService.put("color", "green");
         itemStyleForBaseService.put("color", "black");
 
+
         if (allSelectedServices != null) {
             for (SelectedService selectedService : allSelectedServices) {
 
@@ -141,7 +142,6 @@ public class WebDataServiceImpl implements WebDataService {
                 }
                 node = new HashMap<>();
                 node.put("name", serviceName);
-                node.put("label", serviceName);
                 node.put("categories", serviceName);
                 List<String> endpoints = serviceFound.getEndpoints();
                 if (endpoints != null) {
@@ -167,7 +167,6 @@ public class WebDataServiceImpl implements WebDataService {
                         String endpointNodeName = serviceName + " " + enpointName;
                         node = new HashMap<>();
                         node.put("name", endpointNodeName);
-                        node.put("label", endpointNodeName);
                         node.put("categories", endpointNodeName);
                         node.put("value", 15);
                         node.put("itemStyle", itemStyleForEndpoint);
@@ -190,19 +189,13 @@ public class WebDataServiceImpl implements WebDataService {
         Map<String, Object> link; // 声明单个 node
 
         Map<String, Object> labelForEndpointLink = new HashMap<>(); // API Endpoint Link 标签
-        Map<String, Object> lineStyleForEndpointLink = new HashMap<>(); // API Endpoint Link 标签
         labelForEndpointLink.put("formatter", "ENDPOINT");
         labelForEndpointLink.put("show", true);
-        lineStyleForEndpointLink.put("color", "blue");
-        lineStyleForEndpointLink.put("width", 3);
 
         Map<String, Object> labelForInvokeLink = new HashMap<>(); // Invoke Link 标签
-        Map<String, Object> lineStyleForInvokeLink = new HashMap<>(); // Invoke Link 标签
         List<String> symbolForInvokeLink = new ArrayList<>();
         labelForInvokeLink.put("formatter", "INVOKE");
         labelForInvokeLink.put("show", true);
-        lineStyleForInvokeLink.put("color", "orange");
-        lineStyleForInvokeLink.put("width", 3);
         symbolForInvokeLink.add(0, "none");
         symbolForInvokeLink.add(1, "arrow");
 
@@ -224,7 +217,6 @@ public class WebDataServiceImpl implements WebDataService {
                         link.put("target", serviceName + " " + endpoint);
                         link.put("value", 100);
                         link.put("label", labelForEndpointLink);
-                        link.put("lineStyle", lineStyleForEndpointLink);
 
                         links.add(link);
                     }
@@ -241,7 +233,6 @@ public class WebDataServiceImpl implements WebDataService {
                             link.put("target", toService + " " + toEndpoint);
                             link.put("value", 5);
                             link.put("label", labelForInvokeLink);
-                            link.put("lineStyle", lineStyleForInvokeLink);
                             link.put("symbol", symbolForInvokeLink);
 
                             links.add(link);

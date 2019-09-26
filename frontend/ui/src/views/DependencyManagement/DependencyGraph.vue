@@ -46,15 +46,46 @@
                 // 基于准备好的dom，初始化echarts实例
                 let dependencyGraph = this.$echarts.init(document.getElementById('dependencyGraph'));
 
-                // 数据处理
+                // nodes 数据处理
                 this.nodes.forEach(function (node) {
                     node.symbolSize = node.value;
-                    node.label = {
-                        normal: {
-                            show: node.symbolSize > 1
+                    if (node.value > 15) {
+                        node.symbol = 'rect';
+                        node.label = {
+                            normal: {
+                                show: true,
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                position: 'bottom',
+                            }
+                        };
+                    } else {
+                        node.label = {
+                            normal: {
+                                show: false,
+                                fontSize: 15,
+                                fontWeight: 'bold',
+                                position: 'bottom',
+                            }
+                        };
+                    }
+
+                });
+
+                // links 数据处理
+                this.links.forEach(function (link) {
+                    link.label={
+                        show: false,
+                    }
+                    if (link.value < 10) {
+                        // Invoke
+                        link.lineStyle = {
+                            type: 'dotted',
+                            color: 'orange',
+                            width: 3,
                         }
-                    };
-                    // node.category = node.attributes.modularity_class;
+                    } else {}
+
                 });
                 // 绘制图表
                 dependencyGraph.setOption({
@@ -71,9 +102,9 @@
                             type: 'graph',
                             layout: 'force',
                             force: {
-                                gravity: 0.02, // 中心引力
-                                repulsion: 100,
-                                edgeLength: [50, 200],
+                                gravity: 0.001, // 中心引力
+                                repulsion: 200,
+                                edgeLength: [20, 150],
                             },
                             nodes: this.nodes,
                             links: this.links,
@@ -90,12 +121,14 @@
                                 }
                             },
                             label: {
-                                position: 'right',
-                                formatter: '{b}'
+                                position: 'bottom',
+                                formatter: '{b}',
+                                // fontSize: 20,
+                                // fontWeight: 'bold',
                             },
                             lineStyle: {
                                 color: 'source',
-                                curveness: 0.3
+                                curveness: 0
                             },
                             emphasis: {
                                 lineStyle: {
