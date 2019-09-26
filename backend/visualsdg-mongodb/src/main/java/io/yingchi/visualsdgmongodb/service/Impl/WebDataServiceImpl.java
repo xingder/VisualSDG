@@ -27,7 +27,7 @@ public class WebDataServiceImpl implements WebDataService {
     @Autowired
     ServiceNodeService serviceNodeService;
 
-    Logger logger = LoggerFactory.getLogger(WebDataServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public List<Map<String, Object>> getServiceTableData() {

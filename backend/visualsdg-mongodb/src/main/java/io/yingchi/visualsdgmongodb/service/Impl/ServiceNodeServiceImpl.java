@@ -15,7 +15,7 @@ import java.util.*;
 @Service
 public class ServiceNodeServiceImpl implements ServiceNodeService {
 
-    Logger logger = LoggerFactory.getLogger(ServiceNodeServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @Autowired

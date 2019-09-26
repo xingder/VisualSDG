@@ -25,7 +25,7 @@ import java.util.Map;
 @RestController
 public class ServiceNodeController {
 
-    Logger logger = LoggerFactory.getLogger(ServiceNodeController.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass());;
 
     @Autowired
     ServiceNodeService serviceNodeService;
