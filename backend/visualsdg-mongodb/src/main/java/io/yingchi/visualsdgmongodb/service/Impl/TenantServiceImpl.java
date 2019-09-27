@@ -26,7 +26,7 @@ public class TenantServiceImpl implements TenantService {
     public Result save(Tenant newTenant) {
         Tenant save = tenantRepository.save(newTenant);
         Result result = new Result<>();
-        result.setMsg("New saved tenant instance id: " + save.get_id());
+        result.setMsg("新租户保存成功，租户id: " + save.get_id());
         result.setStatus(Result.STATUS_NO_ERROR);
 
         return result;
@@ -100,6 +100,24 @@ public class TenantServiceImpl implements TenantService {
             Result result = new Result();
             result.setStatus(Result.STATUS_ERROR);
             result.setMsg("租户：" + tenantName + " 不存在，删除失败");
+            return result;
+        }
+    }
+
+    @Override
+    public Result update(Tenant tenant) {
+        Tenant tenantFound = tenantRepository.findTenantByTenantName(tenant.getTenantName());
+        if (tenantFound != null) {
+            Result result = new Result();
+            tenantFound.setDeployedServiceList(tenant.getDeployedServiceList());
+            tenantRepository.save(tenantFound);
+            result.setStatus(Result.STATUS_NO_ERROR);
+            result.setMsg(tenant.getTenantName() + " 租户服务部署成功");
+            return result;
+        } else {
+            Result result = new Result();
+            result.setStatus(Result.STATUS_ERROR);
+            result.setMsg("租户服务部署失败，未找到租户：" + tenant.getTenantName());
             return result;
         }
     }

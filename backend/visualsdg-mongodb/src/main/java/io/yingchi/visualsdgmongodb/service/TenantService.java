@@ -15,5 +15,5 @@ public interface TenantService {
 
     public Result deleteTenantByTenantName(String tenantName);
 
-
+    public Result update(Tenant tenant);
 }

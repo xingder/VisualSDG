@@ -10,25 +10,26 @@
             <p>服务端检索到已存在 {{cascaders.length}} 个服务</p>
             <p>当前已选择 {{selectedServices.length}} 个服务</p>
 
-            <!-- 多级选择 -->
-<!--            <div v-for="_,index in cascaders" class="service-cascaders">-->
-<!--                服务 {{index+1}}-->
-<!--                <a-cascader class="service-cascader" :options="cascaders[index]" @change="onChange" :placeholder="cascaders[index][0].label" :allowClear="false" />-->
-<!--            </div>-->
-
             <!-- 下拉选择 -->
             <div v-for="cascader in cascaders" style="margin: 15px" class="service-cascaders">
                 服务 {{cascader[0].label}}
                 <a-divider type="vertical"></a-divider>
-                <a-select :defaultValue="cascader[0].label" style="width: 150px;"  @dropdownVisibleChange="onDropdownVisivleChange(cascader[0].label)" @change="onChange">
+                <a-select  style="width: 150px;"  @dropdownVisibleChange="onDropdownVisivleChange(cascader[0].label)" @change="onChange">
                     <a-select-option v-for="child in cascader[0].children"  :value="child.value" >{{child.label}}</a-select-option>
                 </a-select>
             </div>
 
+            <a-divider type="horizontal"></a-divider>
 
+            <div>
+                部署租户选择：
+                <a-select  style="width: 150px;"  @change="onTenantSelectorChange" notFoundContent="当前无租户">
+                    <a-select-option v-for="tenant in tenants"  :value="tenant.tenantName" >{{tenant.tenantName}}</a-select-option>
+                </a-select>
+            </div>
 
             <div style="text-align: center; margin: 30px">
-                <span v-if="selectedServices.length !== 0"><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交方案</a-button></span>
+                <span v-if="selectedServices.length !== 0 && selecting_tenant !== ''"><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交方案</a-button></span>
                 <span v-else><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService" disabled>提交方案</a-button></span>
                 <a-button style="width: 60px; margin: 10px" @click="resetSelect">重置</a-button>
                 <a-button type="danger" style="width: 100px; margin: 10px" @click="clearDeploy">清除部署</a-button>
@@ -68,6 +69,9 @@
     import axios from 'axios';
     import DependencyGraph from './DependencyGraph.vue';
 
+    const RESULT_NO_ERROR = 0;
+    const RESULT_ERROR = 1;
+
     export default {
         name: "ServicesDeployment",
         components: {
@@ -79,16 +83,33 @@
                 selectedServices: [], // 选择的服务及版本列表
                 showDeploySequencesConfirm: false,
                 deploy_list: [],
-
+                tenants: [],
+                tenant: {
+                    tenantName: '',
+                    deployedServiceList: '',
+                },
                 selecting_service: '',
                 selecting_version: '',
-            }
+                selecting_tenant: '',
+            };
         },
         methods: {
+            // 获取数据
             fetchData() {
-                // 获取数据
                 const URL_GET_CASCADERS = 'http://localhost:8888/cascaders';
+                const URL_GET_TENANTS = 'http://localhost:8888/tenants';
 
+                // 获取全部租户数据
+                axios.get(URL_GET_TENANTS).then(response => {
+                    const result = response.data;
+                    if (result.status === RESULT_NO_ERROR) {
+                        this.tenants = result.data;
+                    }
+                }).catch((err)=>{
+                    this.$message.error("URL_GET_TENANTS ERROR：" + err)
+                });
+
+                // 获取下拉列表数据
                 axios.get(URL_GET_CASCADERS).then(response => {
                     this.cascaders = response.data;
                     // console.log(response)
@@ -101,6 +122,7 @@
                 this.selectedServices = [];
                 this.cascaders = [];
                 this.fetchData();
+                console.log(this.selecting_tenant)
             },
 
             clearDeploy() {
@@ -121,12 +143,13 @@
 
             submitSelectedService() {
                 this.showDeploySequencesConfirm = true;
+
                 const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
 
+                // 无租户模式下，直接上传 SelectedServices
                 axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
                     console.log(response)
                     this.fetchDeploySequences(); // 上传后获取部署顺序
-
                 }).catch((err) => {
                     console.log("无法上传 selectedServices 数据: " + err)
                 });
@@ -145,11 +168,31 @@
             },
 
             handleDeploySequencesConfirm() {
-                this.$refs.graph.fetchDataAndDrawGraph(); // 选择服务改变后 DependencyGraph 组件依赖图数据重新获取
-                this.fetchData();
 
-                this.showDeploySequencesConfirm = false;
-                this.deploy_list = [];
+
+                this.tenant.tenantName = this.selecting_tenant;
+                this.tenant.deployedServiceList = this.selectedServices;
+
+                const URL_POST_TENANT = 'http://localhost:8888/tenant';
+
+
+                // // 无租户模式下，直接上传 SelectedServices
+                axios.post(URL_POST_TENANT, this.tenant).then(response => {
+                    const result = response.data;
+                    if (result.status === RESULT_NO_ERROR) {
+                        this.fetchDeploySequences(); // 上传后获取部署顺序
+                        this.$message.success(result.msg);
+
+                        this.showDeploySequencesConfirm = false;
+                        this.deploy_list = [];
+                        this.$refs.graph.fetchDataAndDrawGraph(); // 选择服务改变后 DependencyGraph 组件依赖图数据重新获取
+                        this.resetSelect();
+                    }
+                }).catch((err) => {
+                    this.showDeploySequencesConfirm = false;
+                    this.$message.error("无法获取 URL_POST_TENANT ERR: " + err);
+                });
+
             },
 
             // 打开下拉列表回调
@@ -198,6 +241,12 @@
                 // console.log(this.selectedServices);
 
             },
+
+            // 租户选择回调
+            onTenantSelectorChange(value) {
+                this.selecting_tenant = value;
+                console.log(value)
+            }
 
         },
         mounted() {

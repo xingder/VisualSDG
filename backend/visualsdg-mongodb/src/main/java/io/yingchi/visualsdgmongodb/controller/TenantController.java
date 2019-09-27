@@ -20,10 +20,14 @@ public class TenantController {
 
 
     @PostMapping("/tenant/{tenantName}")
-    public Result saveNewTenant(@PathVariable("tenantName") String tenantName) {
+    public Result saveNewTenantByTenantName(@PathVariable("tenantName") String tenantName) {
         return tenantService.createTenantByTenantName(tenantName);
     }
 
+    @PostMapping("/tenant")
+    public Result saveNewTenantByTenantName(@RequestBody Tenant tenant) {
+        return tenantService.update(tenant);
+    }
 
     @GetMapping("/tenant/{tenantName}")
     public Result findTenantByTenantName(@PathVariable("tenantName") String tenantName) {
