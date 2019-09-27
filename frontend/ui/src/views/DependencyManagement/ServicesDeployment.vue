@@ -10,11 +10,22 @@
             <p>服务端检索到已存在 {{cascaders.length}} 个服务</p>
             <p>当前已选择 {{selectedServices.length}} 个服务</p>
 
+            <!-- 多级选择 -->
+<!--            <div v-for="_,index in cascaders" class="service-cascaders">-->
+<!--                服务 {{index+1}}-->
+<!--                <a-cascader class="service-cascader" :options="cascaders[index]" @change="onChange" :placeholder="cascaders[index][0].label" :allowClear="false" />-->
+<!--            </div>-->
 
-            <div v-for="_,index in cascaders" class="service-cascaders">
-                服务 {{index+1}}
-                <a-cascader class="service-cascader" :options="cascaders[index]" @change="onChange" :placeholder="cascaders[index][0].label" :allowClear="false" />
+            <!-- 下拉选择 -->
+            <div v-for="cascader in cascaders" style="margin: 15px" class="service-cascaders">
+                服务 {{cascader[0].label}}
+                <a-divider type="vertical"></a-divider>
+                <a-select :defaultValue="cascader[0].label" style="width: 150px;"  @dropdownVisibleChange="onDropdownVisivleChange(cascader[0].label)" @change="onChange">
+                    <a-select-option v-for="child in cascader[0].children"  :value="child.value" >{{child.label}}</a-select-option>
+                </a-select>
             </div>
+
+
 
             <div style="text-align: center; margin: 30px">
                 <span v-if="selectedServices.length !== 0"><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交方案</a-button></span>
@@ -68,6 +79,9 @@
                 selectedServices: [], // 选择的服务及版本列表
                 showDeploySequencesConfirm: false,
                 deploy_list: [],
+
+                selecting_service: '',
+                selecting_version: '',
             }
         },
         methods: {
@@ -138,26 +152,49 @@
                 this.deploy_list = [];
             },
 
-            onChange(value) {
-                if (value[0] === undefined) {
-                    return;
-                }
+            // 打开下拉列表回调
+            onDropdownVisivleChange(selecting_service) {
+                console.log(selecting_service)
+                this.selecting_service = selecting_service; // 打开下拉列表时记录当前对应的服务
+            },
 
-                // 级联选择器选定时，列表中添加相应的选择信息，并且去重
+            // 列表选择完成的回调
+            onChange(selecting_version) {
+                console.log(this.selecting_service + " " + selecting_version);
+
                 let flag = 0; // 重复标记
-                for (var i = 0; i < this.selectedServices.length; i++) {
-                    if (value[0] === this.selectedServices[i].serviceName) {
+                for (var i in this.selectedServices) {
+                    if (this.selectedServices[i].serviceName === this.selecting_service) {
                         flag = 1;
-                        this.selectedServices[i].version = value[1];
-                        // console.log("同名服务，选择了新版本");
                         break;
                     }
                 }
 
-                if (flag !== 1) {
-                    this.selectedServices.push({serviceName: value[0],version: value[1]});
-                    flag = 0;
+                if (flag === 0) {
+                    this.selectedServices.push({serviceName: this.selecting_service, version: selecting_version})
                 }
+
+                console.log(this.selectedServices);
+
+                // if (value[0] === undefined) {
+                //     return;
+                // }
+                //
+                // // 级联选择器选定时，列表中添加相应的选择信息，并且去重
+                // let flag = 0; // 重复标记
+                // for (var i = 0; i < this.selectedServices.length; i++) {
+                //     if (value[0] === this.selectedServices[i].serviceName) {
+                //         flag = 1;
+                //         this.selectedServices[i].version = value[1];
+                //         // console.log("同名服务，选择了新版本");
+                //         break;
+                //     }
+                // }
+                //
+                // if (flag !== 1) {
+                //     this.selectedServices.push({serviceName: value[0],version: value[1]});
+                //     flag = 0;
+                // }
                 // console.log(this.selectedServices);
 
             },
@@ -176,7 +213,7 @@
 
     }
     .service-cascaders {
-        text-align: center;
+        text-align: left;
     }
 
     .service-cascader {
