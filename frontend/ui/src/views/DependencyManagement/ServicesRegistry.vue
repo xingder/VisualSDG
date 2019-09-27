@@ -1,6 +1,6 @@
 <template>
     <div class="service-list">
-
+        <h2>ServicesRegistry</h2>
         <a-button type="primary" style="margin: 20px" @click="showDrawer">上传依赖配置清单</a-button>
         <a-button type="danger" style="margin: 20px" @click="showDeleteAllConfirm">删除所有服务</a-button>
 
@@ -11,9 +11,7 @@
             <span slot="endpoints" slot-scope="endpoints"><a-tag v-for="endpoint in endpoints" color="blue">{{endpoint}}</a-tag></span>
             <span slot="dependencies" slot-scope="dependencies"><a-tag v-for="dependency in dependencies" color="red">{{dependency}}</a-tag></span>
             <span slot="options" slot-scope="text, record">
-<!--              <a href="javascript:;">Invite 一 {{record.name}}</a>-->
                 <a-button type="danger" @click="showDeleteConfirm(record.service, record.versions)">Delete</a-button>
-<!--              <a-divider type="vertical" />-->
             </span>
         </a-table>
 

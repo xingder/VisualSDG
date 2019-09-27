@@ -5,6 +5,8 @@ public class Result<T> {
     private int status;
     private String msg;
     private T data;
+    public static final int STATUS_NO_ERROR = 0;
+    public static final int STATUS_ERROR = 1;
 
     public Result(int status, String msg, T data) {
         this.status = status;

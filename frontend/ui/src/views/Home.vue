@@ -30,6 +30,7 @@
                 <span slot="title"><a-icon type="laptop" />服务管理</span>
                 <a-menu-item><router-link to="/DependencyGraph">依赖拓扑</router-link></a-menu-item>
                 <a-menu-item><router-link to="/ServicesRegistry">服务中心</router-link></a-menu-item>
+                <a-menu-item><router-link to="/TenantManagement">租户管理</router-link></a-menu-item>
               </a-sub-menu>
               <a-sub-menu key="sub2">
                 <span slot="title"><a-icon type="laptop" />部署管理</span>

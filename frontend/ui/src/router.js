@@ -24,6 +24,7 @@ export default new Router({
         {path: '/ServicesDeployment', component: () => import('./views/DependencyManagement/ServicesDeployment.vue')},
         {path: '/ServiceVersionChange', component: () => import('./views/DependencyManagement/ServiceVersionChange.vue')},
         {path: '/DeployManagement', component: () => import('./views/DependencyManagement/DeployManagement.vue')},
+        {path: '/TenantManagement', component: () => import('./views/DependencyManagement/TenantManagement.vue')},
       ]
     },
     {
