@@ -1,7 +1,7 @@
 <template>
     <div class="ServiceVersionChange">
         <div id="DMGraph">
-            <DependencyGraph ref="graph"/>
+            <SDG graphNname="ServiceVersionChangeSDG" ref="graph"/>
         </div>
 
         <div id="right-management-box">
@@ -71,15 +71,20 @@
 
 <script>
     import axios from 'axios';
-    import DependencyGraph from './DependencyGraph.vue';
+    import SDG from '../../components/echarts/SDG.vue';
+
+    const RESULT_NO_ERROR = 0;
+    const RESULT_ERROR = 1;
+
 
     export default {
         name: "ServiceVersionChange",
         components: {
-            DependencyGraph,
+            SDG,
         },
         data() {
             return {
+                tenants: [],
                 allServices: [],
                 currentSelectedServices: [], // 当前选中的服务列表
 
@@ -105,6 +110,17 @@
                 const URL_GET_SELECTED_SERVICES = 'http://localhost:8888/selectedService';
                 const URL_GET_ALL_SERVICES = 'http://localhost:8888/service';
                 const URL_GET_CHECK_MULTIVERSION = 'http://localhost:8888/selectedServicesMutiversionFlags';
+                const URL_GET_TENANTS = 'http://localhost:8888/tenants';
+
+                // 获取全部租户数据
+                axios.get(URL_GET_TENANTS).then(response => {
+                    const result = response.data;
+                    if (result.status === RESULT_NO_ERROR) {
+                        this.tenants = result.data;
+                    }
+                }).catch((err)=>{
+                    this.$message.error("URL_GET_TENANTS ERROR：" + err)
+                });
 
                 axios.get(URL_GET_SELECTED_SERVICES).then(response => {
                     // console.log(response.data);

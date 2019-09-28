@@ -17,7 +17,7 @@
 
 <script>
     import axios from 'axios';
-    import DependencyGraph from './DependencyGraph.vue';
+    import DependencyGraph from '../../components/echarts/SDG.vue';
 
     export default {
         name: "DeployManagement",

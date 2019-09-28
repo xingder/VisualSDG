@@ -2,7 +2,7 @@
     <div class="ServicesDeployment">
 
         <div id="left">
-            <DependencyGraph  ref="graph"/>
+            <SDG graphNname="ServicesDeploymentSDG" :tenants="tenants" ref="graph"/>
         </div>
 
         <div id="right">
@@ -67,7 +67,7 @@
 
 <script>
     import axios from 'axios';
-    import DependencyGraph from './DependencyGraph.vue';
+    import SDG from '../../components/echarts/SDG.vue';
 
     const RESULT_NO_ERROR = 0;
     const RESULT_ERROR = 1;
@@ -75,7 +75,7 @@
     export default {
         name: "ServicesDeployment",
         components: {
-            DependencyGraph,
+            SDG,
         },
         data() {
             return {
