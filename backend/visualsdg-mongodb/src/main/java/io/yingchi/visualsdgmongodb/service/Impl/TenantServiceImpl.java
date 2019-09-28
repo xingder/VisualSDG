@@ -1,6 +1,5 @@
 package io.yingchi.visualsdgmongodb.service.Impl;
 
-import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
 import io.yingchi.visualsdgmongodb.domain.PO.Tenant;
 import io.yingchi.visualsdgmongodb.domain.VO.Result;
 import io.yingchi.visualsdgmongodb.repository.TenantRepository;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

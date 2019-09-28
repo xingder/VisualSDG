@@ -1,6 +1,6 @@
 package io.yingchi.visualsdgmongodb.repository;
 
-import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
+import io.yingchi.visualsdgmongodb.domain.VO.SelectedService;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

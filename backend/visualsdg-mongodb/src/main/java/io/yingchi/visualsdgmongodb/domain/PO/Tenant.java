@@ -1,5 +1,6 @@
 package io.yingchi.visualsdgmongodb.domain.PO;
 
+import io.yingchi.visualsdgmongodb.domain.VO.SelectedService;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

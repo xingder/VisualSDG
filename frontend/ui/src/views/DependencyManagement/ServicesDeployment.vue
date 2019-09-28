@@ -29,8 +29,8 @@
 <!--            </div>-->
 
             <div style="text-align: center; margin: 30px">
-                <span v-if="selectedServices.length !== 0 && selecting_tenant !== ''"><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交方案</a-button></span>
-                <span v-else><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService" disabled>提交方案</a-button></span>
+                <span v-if="selectedServices.length !== 0 && selecting_tenant !== ''"><a-button type="primary" style="width: 100px; margin: 10px" @click="showDeployConfirmModal">提交方案</a-button></span>
+                <span v-else><a-button type="primary" style="width: 100px; margin: 10px" @click="showDeployConfirmModal" disabled>提交方案</a-button></span>
                 <a-button style="width: 60px; margin: 10px" @click="resetSelect">重置</a-button>
                 <a-button type="danger" style="width: 100px; margin: 10px" @click="clearDeploy">清除部署</a-button>
             </div>
@@ -153,37 +153,22 @@
 
             },
 
-            // 打开部署确认对话框，提交已选择服务，用于生成部署序列
-            submitSelectedService() {
+            // 打开部署确认对话框，获取部署序列
+            showDeployConfirmModal() {
                 this.showDeploySequencesConfirm = true;
 
-                const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
-
-                // 无租户模式下，直接上传 SelectedServices 临时储存
-                axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
-                    console.log(response)
-                    this.fetchDeploySequences(); // 上传后获取部署顺序
-                }).catch((err) => {
-                    console.log("无法上传 selectedServices 数据: " + err)
-                });
-
-            },
-
-            // 获取生成的部署序列
-            fetchDeploySequences() {
-                const URL_GET_DEPLOY_LIST = 'http://localhost:8888/deployList';
-                axios.get(URL_GET_DEPLOY_LIST).then(response => {
+                const URL_POST_SELECTEDSERVICES_AND_GET_DEPLOY_LIST = 'http://localhost:8888/deployList';
+                axios.post(URL_POST_SELECTEDSERVICES_AND_GET_DEPLOY_LIST,this.selectedServices).then(response => {
                     this.deploy_list = response.data;
                     // console.log(this.deploy_list)
                 }).catch((err) => {
-                    console.log("无法获取 deployList 数据: " + err)
-                    this.$message.error("无法获取 deployList 数据: " + err);
+                    this.$message.error("URL_POST_SELECTEDSERVICES_AND_GET_DEPLOY_LIST ERR: " + err);
                 });
+
             },
 
+            // 确认部署，关闭部署确认对话框
             handleDeploySequencesConfirm() {
-
-
                 this.tenant.tenantName = this.selecting_tenant;
                 this.tenant.deployedServiceList = this.selectedServices;
 
@@ -194,7 +179,7 @@
                 axios.post(URL_POST_TENANT, this.tenant).then(response => {
                     const result = response.data;
                     if (result.status === RESULT_NO_ERROR) {
-                        this.fetchDeploySequences(); // 上传后获取部署顺序
+                        // this.fetchDeploySequences(); // 上传后获取部署顺序
                         this.$message.success(result.msg);
 
                         this.showDeploySequencesConfirm = false;

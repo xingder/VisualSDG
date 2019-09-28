@@ -1,6 +1,6 @@
 package io.yingchi.visualsdgmongodb.service.Impl;
 
-import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
+import io.yingchi.visualsdgmongodb.domain.VO.SelectedService;
 import io.yingchi.visualsdgmongodb.domain.PO.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;

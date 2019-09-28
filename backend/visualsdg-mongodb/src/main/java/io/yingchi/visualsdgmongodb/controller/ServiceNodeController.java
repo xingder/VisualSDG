@@ -3,7 +3,7 @@ package io.yingchi.visualsdgmongodb.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import io.yingchi.visualsdgmongodb.domain.VO.ResultYamlObject;
-import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
+import io.yingchi.visualsdgmongodb.domain.VO.SelectedService;
 import io.yingchi.visualsdgmongodb.domain.PO.ServiceNode;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
@@ -118,10 +118,10 @@ public class ServiceNodeController {
         return checkResult;
     }
 
-    
-    @GetMapping("/deployList")
-    public List<Map<String, Object>> fetchDeployList() {
-        return webDataService.getDeployList();
+
+    @PostMapping("/deployList")
+    public List<Map<String, Object>> fetchDeployList(@RequestBody List<SelectedService> allSelectedServices) {
+        return webDataService.getDeployList(allSelectedServices);
     }
 
     @GetMapping("/selectedServicesMutiversionFlags")

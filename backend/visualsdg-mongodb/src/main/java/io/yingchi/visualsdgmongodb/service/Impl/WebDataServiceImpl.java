@@ -1,6 +1,6 @@
 package io.yingchi.visualsdgmongodb.service.Impl;
 
-import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
+import io.yingchi.visualsdgmongodb.domain.VO.SelectedService;
 import io.yingchi.visualsdgmongodb.domain.PO.ServiceNode;
 import io.yingchi.visualsdgmongodb.domain.PO.Tenant;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
@@ -262,10 +262,10 @@ public class WebDataServiceImpl implements WebDataService {
      * @return
      */
     @Override
-    public List<Map<String, Object>> getDeployList() {
+    public List<Map<String, Object>> getDeployList(List<SelectedService> allSelectedServices) {
+
         List<Map<String, Object>> deployList = new ArrayList<>(); // 新建部署序列
         Map<String, Object> deployNode; // 部署序列中各部署节点的信息 map
-        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取当前所有已经选择部署的服务信息
         List<String> allSelectedServicesNameList = new ArrayList<>(); // 获取已选择部署的服务名单
 
         if (allSelectedServices != null) { // 当已选择的服务列表非空时
