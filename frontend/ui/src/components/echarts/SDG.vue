@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="selector" style="margin: 15px 0">
-            租户视图：
+            租户选择：
             <a-select v-if="tenants[0].tenantName !== ''" :defaultValue="tenants[0].tenantName" style="width: 150px;"  @change="onSDGTenantSelectorChange" notFoundContent="当前无租户">
                 <a-select-option v-for="tenant in this.tenants"  :value="tenant.tenantName">{{tenant.tenantName}}</a-select-option>
             </a-select>
@@ -40,7 +40,8 @@
         },
         watch:{
             currentTenant() {
-                console.log("tenants changed");
+                // console.log("tenants changed");
+                this.$emit('currentTenantChanged', this.currentTenant); // 向父组件传递当前租户名
                 this.fetchDataAndDrawGraph();
             }
         },
@@ -54,15 +55,15 @@
                     if (result.status === RESULT_NO_ERROR) {
                         this.tenants = result.data;
                         this.currentTenant = this.tenants[0].tenantName;
-                        this.drawGraph();
+                        this.fetchDataAndDrawGraph();
                     }
                 }).catch((err)=>{
                     this.$message.error("URL_GET_TENANTS ERROR：" + err)
                 });
             },
             fetchDataAndDrawGraph() {
-                const URL_GET_NODES = 'http://localhost:8888/nodes';
-                const URL_GET_LINKS = 'http://localhost:8888/links';
+                const URL_GET_NODES = 'http://localhost:8888/nodes/' + this.currentTenant;
+                const URL_GET_LINKS = 'http://localhost:8888/links/' + this.currentTenant;
 
                 axios.get(URL_GET_NODES).then(response => {
                     this.nodes = response.data;
@@ -194,8 +195,6 @@
         },
         mounted() {
             this.initTenants();
-            this.drawGraph();
-            this.fetchDataAndDrawGraph();
         },
         beforeDestroy() {
             if (this.chart) {

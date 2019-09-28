@@ -98,15 +98,15 @@ public class ServiceNodeController {
         return selectedServiceRepository.findAll();
     }
 
-    @GetMapping("/nodes")
-    public List<Map<String, Object>> fetchAllGraphNodesData() {
+    @GetMapping("/nodes/{tenantName}")
+    public List<Map<String, Object>> fetchAllGraphNodesData(@PathVariable("tenantName") String tenantName) {
 
-        return webDataService.getGraphNodesData();
+        return webDataService.getGraphNodesData(tenantName);
     }
 
-    @GetMapping("/links")
-    public List<Map<String, Object>> fetchAllGraphLinksData() {
-        return webDataService.getGraphLinksData();
+    @GetMapping("/links/{tenantName}")
+    public List<Map<String, Object>> fetchAllGraphLinksData(@PathVariable("tenantName") String tenantName) {
+        return webDataService.getGraphLinksData(tenantName);
     }
 
     @GetMapping("/serviceVersionChangeCheck")
@@ -118,6 +118,7 @@ public class ServiceNodeController {
         return checkResult;
     }
 
+    
     @GetMapping("/deployList")
     public List<Map<String, Object>> fetchDeployList() {
         return webDataService.getDeployList();

@@ -2,8 +2,10 @@ package io.yingchi.visualsdgmongodb.service.Impl;
 
 import io.yingchi.visualsdgmongodb.domain.PO.SelectedService;
 import io.yingchi.visualsdgmongodb.domain.PO.ServiceNode;
+import io.yingchi.visualsdgmongodb.domain.PO.Tenant;
 import io.yingchi.visualsdgmongodb.repository.SelectedServiceRepository;
 import io.yingchi.visualsdgmongodb.repository.ServiceNodeRepository;
+import io.yingchi.visualsdgmongodb.repository.TenantRepository;
 import io.yingchi.visualsdgmongodb.service.ServiceNodeService;
 import io.yingchi.visualsdgmongodb.service.WebDataService;
 import org.slf4j.Logger;
@@ -23,6 +25,9 @@ public class WebDataServiceImpl implements WebDataService {
 
     @Autowired
     SelectedServiceRepository selectedServiceRepository;
+
+    @Autowired
+    TenantRepository tenantRepository;
 
     @Autowired
     ServiceNodeService serviceNodeService;
@@ -116,8 +121,10 @@ public class WebDataServiceImpl implements WebDataService {
     }
 
     @Override
-    public List<Map<String, Object>> getGraphNodesData() {
-        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取到依赖生成页面已经选择的 Service 列表
+    public List<Map<String, Object>> getGraphNodesData(String tenantName) {
+        Tenant tenant = tenantRepository.findTenantByTenantName(tenantName);
+        List<SelectedService> allSelectedServices = tenant.getDeployedServiceList(); // 获取到依赖生成页面已经选择的 Service 列表
+
         List<Map<String, Object>> nodes = new ArrayList<>(); // 声明并初始化 nodes 列表
         Map<String, Object> node; // 声明单个 node
 
@@ -183,8 +190,9 @@ public class WebDataServiceImpl implements WebDataService {
     }
 
     @Override
-    public List<Map<String, Object>> getGraphLinksData() {
-        List<SelectedService> allSelectedServices = selectedServiceRepository.findAll(); // 获取到依赖生成页面已经选择的 Service 列表
+    public List<Map<String, Object>> getGraphLinksData(String tenantName) {
+        Tenant tenant = tenantRepository.findTenantByTenantName(tenantName);
+        List<SelectedService> allSelectedServices = tenant.getDeployedServiceList(); // 获取到依赖生成页面已经选择的 Service 列表
         List<Map<String, Object>> links = new ArrayList<>(); // 声明并初始化 nodes 列表
         Map<String, Object> link; // 声明单个 node
 

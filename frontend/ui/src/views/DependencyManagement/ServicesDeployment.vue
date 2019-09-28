@@ -2,7 +2,7 @@
     <div class="ServicesDeployment">
 
         <div id="left">
-            <SDG graphNname="ServicesDeploymentSDG" :tenants="tenants" ref="graph"/>
+            <SDG graphNname="ServicesDeploymentSDG" :tenants="tenants" ref="graph" @currentTenantChanged="onCurrentTenantChanged"/>
         </div>
 
         <div id="right">
@@ -21,12 +21,12 @@
 
             <a-divider type="horizontal"></a-divider>
 
-            <div>
-                部署租户选择：
-                <a-select  style="width: 150px;"  @change="onTenantSelectorChange" notFoundContent="当前无租户">
-                    <a-select-option v-for="tenant in tenants"  :value="tenant.tenantName" >{{tenant.tenantName}}</a-select-option>
-                </a-select>
-            </div>
+<!--            <div>-->
+<!--                部署租户选择：-->
+<!--                <a-select  style="width: 150px;"  @change="onTenantSelectorChange" notFoundContent="当前无租户">-->
+<!--                    <a-select-option v-for="tenant in tenants"  :value="tenant.tenantName" >{{tenant.tenantName}}</a-select-option>-->
+<!--                </a-select>-->
+<!--            </div>-->
 
             <div style="text-align: center; margin: 30px">
                 <span v-if="selectedServices.length !== 0 && selecting_tenant !== ''"><a-button type="primary" style="width: 100px; margin: 10px" @click="submitSelectedService">提交方案</a-button></span>
@@ -93,6 +93,7 @@
                 selecting_tenant: '',
             };
         },
+
         methods: {
             // 获取数据
             fetchData() {
@@ -118,6 +119,7 @@
                 });
             },
 
+            // 重置列表
             resetSelect() {
                 this.selectedServices = [];
                 this.cascaders = [];
@@ -125,28 +127,39 @@
                 console.log(this.selecting_tenant)
             },
 
+            // 清除部署
             clearDeploy() {
-                this.selectedServices = [];
 
-                const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
+                this.selectedServices = []; // 提交空选择列表
 
-                axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
-                    console.log(response)
-                    this.$refs.graph.fetchDataAndDrawGraph();
-                    this.cascaders = [];
-                    this.fetchData();
+                this.tenant.tenantName = this.selecting_tenant;
+                this.tenant.deployedServiceList = this.selectedServices;
+
+                const URL_POST_TENANT = 'http://localhost:8888/tenant';
+
+
+                axios.post(URL_POST_TENANT, this.tenant).then(response => {
+                    const result = response.data;
+                    if (result.status === RESULT_NO_ERROR) {
+                        this.$message.success("租户 " + this.tenant.tenantName + " 清除部署成功");
+
+                        this.$refs.graph.currentTenant = this.tenant.tenantName;
+                        this.$refs.graph.fetchDataAndDrawGraph(); // 选择服务改变后 DependencyGraph 组件依赖图数据重新获取
+                        this.resetSelect();
+                    }
                 }).catch((err) => {
-                    console.log("无法上传 selectedServices 数据: " + err)
+                    this.$message.error("无法清楚部署 ERR: " + err);
                 });
 
             },
 
+            // 打开部署确认对话框，提交已选择服务，用于生成部署序列
             submitSelectedService() {
                 this.showDeploySequencesConfirm = true;
 
                 const URL_POST_SELECTED_SERVICE = 'http://localhost:8888/selectedService';
 
-                // 无租户模式下，直接上传 SelectedServices
+                // 无租户模式下，直接上传 SelectedServices 临时储存
                 axios.post(URL_POST_SELECTED_SERVICE, this.selectedServices).then(response => {
                     console.log(response)
                     this.fetchDeploySequences(); // 上传后获取部署顺序
@@ -156,11 +169,12 @@
 
             },
 
+            // 获取生成的部署序列
             fetchDeploySequences() {
                 const URL_GET_DEPLOY_LIST = 'http://localhost:8888/deployList';
                 axios.get(URL_GET_DEPLOY_LIST).then(response => {
                     this.deploy_list = response.data;
-                    console.log(this.deploy_list)
+                    // console.log(this.deploy_list)
                 }).catch((err) => {
                     console.log("无法获取 deployList 数据: " + err)
                     this.$message.error("无法获取 deployList 数据: " + err);
@@ -197,13 +211,13 @@
 
             // 打开下拉列表回调
             onDropdownVisivleChange(selecting_service) {
-                console.log(selecting_service)
+                // console.log(selecting_service)
                 this.selecting_service = selecting_service; // 打开下拉列表时记录当前对应的服务
             },
 
             // 列表选择完成的回调
             onChange(selecting_version) {
-                console.log(this.selecting_service + " " + selecting_version);
+                // console.log(this.selecting_service + " " + selecting_version);
 
                 let flag = 0; // 重复标记
                 for (var i in this.selectedServices) {
@@ -217,35 +231,13 @@
                     this.selectedServices.push({serviceName: this.selecting_service, version: selecting_version})
                 }
 
-                console.log(this.selectedServices);
-
-                // if (value[0] === undefined) {
-                //     return;
-                // }
-                //
-                // // 级联选择器选定时，列表中添加相应的选择信息，并且去重
-                // let flag = 0; // 重复标记
-                // for (var i = 0; i < this.selectedServices.length; i++) {
-                //     if (value[0] === this.selectedServices[i].serviceName) {
-                //         flag = 1;
-                //         this.selectedServices[i].version = value[1];
-                //         // console.log("同名服务，选择了新版本");
-                //         break;
-                //     }
-                // }
-                //
-                // if (flag !== 1) {
-                //     this.selectedServices.push({serviceName: value[0],version: value[1]});
-                //     flag = 0;
-                // }
                 // console.log(this.selectedServices);
 
             },
 
-            // 租户选择回调
-            onTenantSelectorChange(value) {
-                this.selecting_tenant = value;
-                console.log(value)
+            onCurrentTenantChanged(value) {
+                // console.log(value);
+                this.selecting_tenant = value; // 接收 SDG 子组件传的值：当前选择的租户
             }
 
         },
