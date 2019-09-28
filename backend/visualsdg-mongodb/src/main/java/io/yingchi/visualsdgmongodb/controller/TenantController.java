@@ -25,7 +25,7 @@ public class TenantController {
     }
 
     @PostMapping("/tenant")
-    public Result saveNewTenantByTenantName(@RequestBody Tenant tenant) {
+    public Result updateTenant(@RequestBody Tenant tenant) {
         return tenantService.update(tenant);
     }
 
